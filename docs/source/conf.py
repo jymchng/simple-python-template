@@ -25,7 +25,7 @@ git_commit = git_repo.head.commit
 # -- Project information -----------------------------------------------------
 
 project = "pythontemplate"
-copyright = f"{date.today().year}, YOUR_NAME_HERE"
+copyright = f"{date.today().year}, YOUR_NAME_HERE" # noqa: A001
 author = "YOUR_NAME_HERE"
 
 # The short X.Y version.
