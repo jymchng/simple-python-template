@@ -247,3 +247,6 @@ pythontemplate/*.html
 
 # Poetry
 poetry.toml
+
+# Ruff
+.ruff_cache/
