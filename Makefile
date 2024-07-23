@@ -1,5 +1,5 @@
 ROOT_DIR := $(shell pwd)
-SRC_DIR := $(ROOT_DIR)/freqtrade
+SRC_DIR := $(ROOT_DIR)/simple_python_template
 TEST_DIR := $(ROOT_DIR)/tests
 COMMAND := $(firstword $(MAKECMDGOALS))
 ARGUMENTS := $(filter-out --,$(filter-out $(firstword $(MAKECMDGOALS)),$(MAKECMDGOALS)))
@@ -34,11 +34,30 @@ test:
 		echo "Error: ${FIRST_ARGUMENT} is not a directory."; \
 	fi;
 
-format:
+format-test:
 	@if [ -d ${TEST_DIR}/${FIRST_ARGUMENT} ]; then \
 		ruff format ${TEST_DIR}/${FIRST_ARGUMENT}; \
 	elif [ ${FIRST_ARGUMENT} == "" ]; then \
 		ruff format ${TEST_DIR}; \
+	else \
+		echo "Error: ${FIRST_ARGUMENT} is not a directory."; \
+	fi;
+
+format:
+	@if [ -d ${SRC_DIR}/${FIRST_ARGUMENT} ]; then \
+		ruff format ${SRC_DIR}/${FIRST_ARGUMENT}; \
+	elif [ ${FIRST_ARGUMENT} == "" ]; then \
+		ruff format ${SRC_DIR}; \
+	else \
+		echo "Error: ${FIRST_ARGUMENT} is not a directory."; \
+	fi;
+
+
+check:
+	@if [ -d ${SRC_DIR}/${FIRST_ARGUMENT} ]; then \
+		ruff check ${SRC_DIR}/${FIRST_ARGUMENT}; \
+	elif [ ${FIRST_ARGUMENT} == "" ]; then \
+		ruff check ${SRC_DIR}; \
 	else \
 		echo "Error: ${FIRST_ARGUMENT} is not a directory."; \
 	fi;
