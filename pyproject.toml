@@ -34,6 +34,7 @@ python = ">=3.9,<3.13"
 typing-extensions = "^4.12.2"
 rich = ">=10.11.0"
 cyclopts = "^2.9.3"
+cython = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "~7.1.2"
