@@ -137,6 +137,24 @@ EOF
     fi
 }
 
+function check_installed_pre_commit() {
+    if ! command -v pre-commit &> /dev/null; then
+        echo "pre-commit is not installed. Do you want to install it? (yes/no)"
+        read -r response
+        if [[ "$response" == "yes" || "$response" == "y" ]]; then
+            echo "Installing pre-commit..."
+            # Assuming pip is available for installation
+            pip install pre-commit
+            echo "pre-commit installed successfully."
+        else
+            echo "pre-commit installation skipped."
+            exit 1
+        fi
+    else
+        echo "pre-commit is already installed."
+    fi
+}
+
 # Call the function to prompt the user
 append_activate_venv_function
 
@@ -147,3 +165,4 @@ append_activate_venv_function
 check_installed_make
 check_installed_python
 check_installed_pip
+check_installed_pre_commit

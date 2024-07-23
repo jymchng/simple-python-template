@@ -9,8 +9,8 @@ This file should be a simple translation from existing c header file(s).
 Multiple header files may be translated here.
 """
 
-from libcpp cimport bool
 from libc.stdint cimport uint8_t, uint32_t
+from libcpp cimport bool
 
 cdef extern from "foo.h":
     # Translate typedef'd structs:

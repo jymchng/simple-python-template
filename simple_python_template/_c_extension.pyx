@@ -1,10 +1,10 @@
 cimport cpythontemplate  # See cpythontemplate.pxd
+
 # Invoke PyErr_CheckSignals() occasionally if your C code runs long.
 # This allows your code to be interrupted via ctrl+c.
 from cpython.exc cimport PyErr_CheckSignals
-from cpython.mem cimport PyMem_Malloc, PyMem_Free
+from cpython.mem cimport PyMem_Free, PyMem_Malloc
 from libc.stddef cimport size_t
-
 
 cdef class Foo:
     """Pythonic interface to the C "foo" struct."""

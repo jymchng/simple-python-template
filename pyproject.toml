@@ -34,7 +34,6 @@ python = ">=3.9,<3.13"
 typing-extensions = "^4.12.2"
 rich = ">=10.11.0"
 cyclopts = "^2.9.3"
-cython = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "~7.1.2"
@@ -54,6 +53,7 @@ pytest-asyncio = "0.23.8"
 pytest-random-order = "1.1.1"
 pytest-timeout = "2.3.1"
 pytest-xdist = "3.6.1"
+cython = "*"
 isort = "5.13.2"
 time-machine = "2.14.2"
 nbconvert = "7.16.4"
@@ -63,6 +63,7 @@ types-requests = "2.32.0.20240712"
 types-tabulate = "0.9.0.20240106"
 types-python-dateutil = "2.9.0.20240316"
 coveralls = ">=4.0.1"
+creosote = "^3.0.2"
 pre-commit = ">=3.7.1"
 
 [tool.poetry.group.debug]
@@ -251,7 +252,7 @@ ignore-words-list = "coo,fo,strat,zar,selectin"
 
 [tool.creosote]
 venvs = [".venv"]
-paths = ["simple-python-template"]
+paths = ["simple_python_template"]
 deps-file = "pyproject.toml"
 sections = ["tool.poetry.dependencies"]
 exclude-deps = ["rich", "typing-extensions"]
@@ -294,7 +295,7 @@ exclude = '''
 line_length = 100
 profile = "black"
 # multi_line_output=3
-lines_after_imports = 2
+lines_after_imports = 1
 skip_glob = [
     "**/.env*",
     "**/env/*",
