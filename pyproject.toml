@@ -1,5 +1,6 @@
 [build-system]
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.1"]
+# https://sam.hooke.me/note/2023/08/poetry-build-py-example/
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.1", "setuptools"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry-dynamic-versioning]
@@ -23,6 +24,7 @@ include = [
 ] # Compiled extensions
 
 [tool.poetry.build]
+script = "build.py"
 generate-setup-file = false
 
 [tool.poetry.scripts]

@@ -166,3 +166,30 @@ check_installed_make
 check_installed_python
 check_installed_pip
 check_installed_pre_commit
+
+# Ask if the user wants to rename the package now
+read -p "Do you want to rename your package now? (yes/no): " rename_response
+
+if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
+
+    # Prompt the user for the package name
+    read -p "Enter the name for your package: " PACKAGE_NAME
+
+    # Define the directories and files to search
+    SEARCH_DIRS=("/assets" "/tests" "README.md" "LICENSE" "simple_python_template")
+
+    # Loop through each directory and file
+    for item in "${SEARCH_DIRS[@]}"; do
+        if [[ -e "$item" ]]; then
+            echo "Processing $item..."
+            # Use sed to replace instances of simple_python_template and simple-python-template
+            sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" -e "s/simple-python-template/$PACKAGE_NAME/g" "$item"
+        else
+            echo "$item does not exist, skipping."
+        fi
+    done
+
+    echo "Replacement complete."
+else
+    echo "Package renaming skipped."
+fi
