@@ -38,7 +38,7 @@ rich = ">=10.11.0"
 cyclopts = "^2.9.3"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = "~7.1.2"
+sphinx = "~7.4.7"
 sphinx_rtd_theme = "~2.0.0"
 gitpython = ">=3.1.31"
 sphinx-copybutton = "^0.5.2"
