@@ -72,7 +72,27 @@
 
 ---
 
-pythontemplate is a
+# Simple Python Template
+
+This template was bootstrapped with [BrianPugn's Python Template](https://github.com/BrianPugh/python-template).
+
+The **Simple Python Template** is a robust and flexible starting point for Python projects, specifically designed to address the challenges faced by developers writing C-Python extensions. Building Python extensions can often be a complex and error-prone process, requiring a deep understanding of both Python and C. This template streamlines that process, making it easier for developers to create high-performance extensions without getting bogged down by the intricacies of the build process.
+
+With a comprehensive `build.py` script included, this template simplifies the building of Python extension modules, whether you're using pure C or leveraging Cython for enhanced performance and ease of use. The `build.py` script automates the compilation and linking of C code, handling dependencies and configurations seamlessly. This allows developers to focus on writing their extension logic rather than wrestling with build configurations.
+
+By incorporating best practices in software engineering, the Simple Python Template ensures that your project is not only easy to set up but also maintainable and scalable. It provides a solid foundation for both novice and experienced developers looking to harness the power of C within their Python applications.
+
+# Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Common Commands](#common-commands)
+- [How To Use](#how-to-use)
+- [Convenient Scripts](#convenient-scripts)
+- [List of Tools Used](#list-of-tools-used)
+- [List of Tools Used for Python](#list-of-tools-used-for-python)
+- [Good Articles and Answers](#good-articles-and-answers)
 
 # Features
 Modular Design: Easily extendable with modular components.
@@ -86,43 +106,146 @@ Continuous Integration: Configured for GitHub Actions.
 Code Quality: Integrated with Code Climate, Codacy, and Snyk for code quality and security.
 
 Coverage Tracking: Coverage tracking with Codecov.
-# Installation
-pythontemplate requires Python `>=3.8` and can be installed via:
+
+# List of Tools Used
+
+This list of tools are opinionated, feel free to remove any by not installing it.
+
+| Name          | Description                                                                                     | Website                                      |
+|---------------|-------------------------------------------------------------------------------------------------|----------------------------------------------|
+| Chocolatey    | A package manager for Windows used to install software like make, cppcheck, and clang-format. | [Chocolatey](https://chocolatey.org/)       |
+| Make          | A build automation tool that is checked for installation and installed if not present.        | [Make](https://www.gnu.org/software/make/) |
+| Python        | The script checks for various versions of Python (specifically python3.9 and above) and installs pip if it is not already installed. | [Python](https://www.python.org/)           |
+| Pip           | The package installer for Python, which is installed if not found.                             | [Pip](https://pip.pypa.io/en/stable/)      |
+| Pre-commit    | A framework for managing and maintaining multi-language pre-commit hooks.                     | [Pre-commit](https://pre-commit.com/)      |
+| Cppcheck      | A static analysis tool for C/C++ code, which is checked for installation and installed if not present. | [Cppcheck](http://cppcheck.sourceforge.net/) |
+| Clang-format  | A tool to format C/C++ code, which is also checked for installation and installed if not present. | [Clang-format](https://clang.llvm.org/docs/ClangFormat.html) |
+| Curl          | A command-line tool for transferring data with URLs, used to download the get-pip.py script. | [Curl](https://curl.se/)                    |
+| Sed           | A stream editor used for parsing and transforming text, specifically for renaming package instances in files. | [Sed](https://www.gnu.org/software/sed/)   |
+| Bash          | The scripting language used to write the entire script.                                       | [Bash](https://www.gnu.org/software/bash/)  |
+
+# List of Tools Used for Python
+
+This list of tools are opinionated, feel free to remove any by removing its occurrences in the [`pyproject.toml`](./pyproject.toml) file.
+
+| Name        | Description                                                                                     | Website                                      |
+|-------------|-------------------------------------------------------------------------------------------------|----------------------------------------------|
+| Poetry      | A dependency management and packaging tool for Python projects.                                | [Poetry](https://python-poetry.org/)        |
+| Sphinx      | A documentation generator for Python projects.                                                | [Sphinx](https://www.sphinx-doc.org/)       |
+| GitPython   | A Python library used to interact with Git repositories.                                      | [GitPython](https://gitpython.readthedocs.io/) |
+| Pre-commit  | A framework for managing and maintaining multi-language pre-commit hooks.                     | [Pre-commit](https://pre-commit.com/)      |
+| Coverage    | A tool for measuring code coverage of Python programs.                                        | [Coverage.py](https://coverage.readthedocs.io/) |
+| Pytest      | A testing framework for Python that makes it easy to write simple and scalable test cases.    | [Pytest](https://pytest.org/)               |
+| Ruff        | A fast Python linter that checks for style and programming errors.                             | [Ruff](https://ruff.rs/)                    |
+| Mypy        | An optional static type checker for Python.                                                   | [Mypy](http://mypy-lang.org/)               |
+| Cython      | A programming language that makes writing C extensions for Python as easy as Python itself.   | [Cython](https://cython.org/)               |
+| Isort       | A Python utility for sorting imports.                                                          | [Isort](https://pycqa.github.io/isort/)    |
+| Time-machine| A library for manipulating time in tests.                                                     | [Time-machine](https://pypi.org/project/time-machine/) |
+| Nbconvert   | A tool for converting Jupyter Notebooks to other formats.                                     | [Nbconvert](https://nbconvert.readthedocs.io/) |
+| Twine       | A utility for publishing Python packages on PyPI.                                             | [Twine](https://twine.readthedocs.io/)     |
+| Black       | A code formatter for Python that enforces a consistent coding style.                           | [Black](https://black.readthedocs.io/)     |
+| Flake8      | A tool for enforcing coding style in Python, combining PyFlakes, pycodestyle, and McCabe complexity checker. | [Flake8](https://flake8.pycqa.org/)        |
+| Codespell   | A tool for checking and correcting common misspellings in text files.                         | [Codespell](https://github.com/codespell-project/codespell) |
+| Creosote    | A tool for managing Python virtual environments.                                               | [Creosote](https://creosote.readthedocs.io/) |
+| Pyright     | A static type checker for Python, providing type checking and type inference.                  | [Pyright](https://github.com/microsoft/pyright) |
+
+
+# How To Use
+
+|Term|Definitions|
+|:---:|:---:|
+|`ROOT_DIR`|The directory where the file [`pyproject.toml`](./pyproject.toml) resides|
+|`SOURCE_DIR`|The directory where the source files (i.e. files that contain your code) are located.|
+|`BUILD_DIR`|The directory where built distributions (e.g., source distributions and wheels) are stored after running the build command. This is typically the `dist` directory created by tools like Poetry.|
+|`TESTS_DIR`|The directory where your test files are located. This is where you will place your test cases to ensure your code functions as expected. Typically, this directory contains files that start with `test_` or end with `_test.py`.|
+
+## Commands
+
+1. Run `init.sh`
+If you're on Windows, you should download Git bash.
 
 ```bash
-python -m pip install git+https://github.com/GIT_USERNAME/GIT_REPONAME.git
+bash init.sh
 ```
 
-# Usage
+This command will attempt to install the necessary tools.
 
-```python
-import pythontemplate
+2. Create a Python virtual environment
+
+```bash
+python -m venv .venv
 ```
 
-# Todos
+A new folder named .venv will be created.
 
-| Task                                                                 | Status                                             |
-|----------------------------------------------------------------------|----------------------------------------------------|
-| Add Prisma                                                           | ![Done](https://img.shields.io/badge/Status-Done-brightgreen)      |
-| Write instructions on this README.md                                 | ![Done](https://img.shields.io/badge/Status-Done-brightgreen)      |
-| Make `appConfig` take from `process.env`                             | ![Not Done](https://img.shields.io/badge/Status-Not%20Done-red) |
-| Make `DATABASE_URL_ZKSYNC_MAINNET` part of `./secrets/.*.<ENVIRONMENT>` | ![Done](https://img.shields.io/badge/Status-Done-brightgreen)      |
-| Create a database init script                                        | ![Not Done](https://img.shields.io/badge/Status-Not%20Done-red) |
-| Minio and logging, transfer all the logs to Minio S3 bucket          | ![Not Done](https://img.shields.io/badge/Status-Not%20Done-red) |
-| Split the dockerfile into production and development        | ![Done](https://img.shields.io/badge/Status-Done-brightgreen) |
+3. Activate the virtual environment
+On macOS/Linux:
 
-# Common Commands
-
-Building `sdist`
-```
-poetry build --format=sdist
+```bash
+source .venv/bin/activate
 ```
 
-Install locally to test!
-```
-pip install ./dist/simple_python_template-0.0.0.tar.gz
+On Windows:
+```bash
+.\.venv\Scripts\activate
 ```
 
-# Good Links
+4. Configure Poetry to use the virtual environment
+```bash
+poetry config virtualenvs.in-project true
+```
+
+This command ensures that Poetry uses the .venv folder created in your project directory.
+
+5. Build the package with Poetry
+```bash
+poetry build
+```
+
+This will create a source distribution and a wheel in the dist directory.
+
+6. Run tests with coverage
+
+To run tests with coverage, use:
+```bash
+python -m pytest --cov=your_package_name tests
+```
+Replace `your_package_name` with the name of your package.
+
+7. Run tests without coverage
+
+To run tests without coverage, simply use:
+```bash
+python -m pytest tests
+```
+This will execute all tests located in the tests directory.
+
+# Convenient Scripts
+
+The scripts are located in the [./scripts](./scripts/) folder.
+
+## quick_tests.sh
+
+To quickly install the package and run tests, you can use the provided `install_and_test.sh` script. This script performs the following steps:
+
+1. **Finds the Largest Version**: It searches for the largest version of the package in the `./dist` directory.
+
+2. **Builds the Package if Not Found**: If no package is found, it attempts to build the package using `poetry build`.
+
+3. **Checks for Existing Installation**: Before installing the package, it checks if the package is already installed using `pip show`.
+
+4. **Uninstalls Existing Package**: If the package is found to be installed, it uninstalls it using `pip uninstall -y`.
+
+5. **Installs the Largest Version**: It installs the largest version found in the `./dist` directory.
+
+6. **Runs Tests**: Finally, it runs the tests using `pytest` to ensure everything is functioning correctly.
+
+To run, use:
+
+```bash
+bash scripts/quick_tests.sh
+```
+
+# Good Articles and Answers
 
 https://stackoverflow.com/questions/60073711/how-to-build-c-extensions-via-poetry

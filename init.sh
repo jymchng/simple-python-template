@@ -155,6 +155,52 @@ function check_installed_pre_commit() {
     fi
 }
 
+function check_installed_cppcheck() {
+    if ! command -v cppcheck &> /dev/null; then
+        echo "cppcheck is not installed. Do you want to install it? (yes/no)"
+        read -r response
+        if [[ "$response" == "yes" || "$response" == "y" ]]; then
+            if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+                echo "Installing cppcheck using Chocolatey..."
+                choco install cppcheck -y
+            else
+                echo "Installing cppcheck..."
+                sudo apt-get update
+                sudo apt-get install -y cppcheck
+            fi
+            echo "cppcheck installed successfully."
+        else
+            echo "cppcheck installation skipped."
+            exit 1
+        fi
+    else
+        echo "cppcheck is already installed."
+    fi
+}
+
+function check_installed_clang_format() {
+    if ! command -v clang-format &> /dev/null; then
+        echo "clang-format is not installed. Do you want to install it? (yes/no)"
+        read -r response
+        if [[ "$response" == "yes" || "$response" == "y" ]]; then
+            if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+                echo "Installing clang-format using Chocolatey..."
+                choco install llvm -y  # clang-format is included in LLVM
+            else
+                echo "Installing clang-format..."
+                sudo apt-get update
+                sudo apt-get install -y clang-format
+            fi
+            echo "clang-format installed successfully."
+        else
+            echo "clang-format installation skipped."
+            exit 1
+        fi
+    else
+        echo "clang-format is already installed."
+    fi
+}
+
 # Call the function to prompt the user
 append_activate_venv_function
 
@@ -167,13 +213,17 @@ check_installed_python
 check_installed_pip
 check_installed_pre_commit
 
+# Check for cppcheck and clang-format; for C extensions
+check_installed_cppcheck
+check_installed_clang_format
+
 # Ask if the user wants to rename the package now
 read -p "Do you want to rename your package now? (yes/no): " rename_response
 
 if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
-
-    # Prompt the user for the package name
+    # Prompt the user for the package name and GIT_USERNAME
     read -p "Enter the name for your package: " PACKAGE_NAME
+    read -p "Enter your GIT_USERNAME: " GIT_USERNAME
 
     # Define the directories and files to search
     SEARCH_DIRS=("/assets" "/tests" "README.md" "LICENSE" "simple_python_template")
@@ -182,8 +232,11 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
     for item in "${SEARCH_DIRS[@]}"; do
         if [[ -e "$item" ]]; then
             echo "Processing $item..."
-            # Use sed to replace instances of simple_python_template and simple-python-template
-            sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" -e "s/simple-python-template/$PACKAGE_NAME/g" "$item"
+            # Use sed to replace instances of simple_python_template, simple-python-template, GIT_USERNAME, and GIT_REPONAME
+            sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" \
+                       -e "s/simple-python-template/$PACKAGE_NAME/g" \
+                       -e "s/GIT_USERNAME/$GIT_USERNAME/g" \
+                       -e "s/GIT_REPONAME/$PACKAGE_NAME/g" "$item"
         else
             echo "$item does not exist, skipping."
         fi

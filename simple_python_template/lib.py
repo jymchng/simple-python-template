@@ -1,9 +1,4 @@
-from simple_python_template._c_extension import (
-    Foo,
-    add,
-)
-
-from typing import TYPE_CHECKING, Protocol
+from typing import TYPE_CHECKING
 
 NEWTYPE_INIT_ARGS_STR = "_newtype_init_args_"
 NEWTYPE_INIT_KWARGS_STR = "_newtype_init_kwargs_"
@@ -12,11 +7,7 @@ UNDEFINED = object()
 if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Tuple, Type, TypeVar
 
-    GenericTypeType = TypeVar("GenericTypeType", type)
-
-    class NewTypeObject(Protocol):
-        _args_: "Tuple[Any, ...]"
-        _kwargs_: "Dict[str, Any]"
+    GenericTypeType = TypeVar("GenericTypeType", bound=type)
 
 
 class NewTypeMethod:
@@ -30,8 +21,8 @@ class NewTypeMethod:
         self.wrapped_cls = wrapped_cls
 
     def __get__(self, inst, owner):
-        self.obj: NewTypeObject = inst
-        self.cls: Type[NewTypeObject] = owner
+        self.obj = inst
+        self.cls = owner
         return self
 
     def __call__(self, *args, **kwargs):
@@ -56,8 +47,6 @@ class NewTypeMethod:
             init_kwargs = getattr(self.obj, new_type_init_kwargs_str, None)
             has_init_args = init_args is not None
             has_init_kwargs = init_kwargs is not None
-            print(has_init_args, has_init_kwargs)
-            print(init_args, init_kwargs)
             if not has_init_args and not has_init_kwargs:
                 return self.cls(result)
             if not has_init_args and has_init_kwargs:
@@ -79,8 +68,8 @@ class NewInit:
             self.has_get = False
 
     def __get__(self, obj, owner):
-        self.obj: NewTypeObject = obj
-        self.cls: Type[NewTypeObject] = owner
+        self.obj = obj
+        self.cls = owner
         return self
 
     def __call__(self, *constructor_args, **constructor_kwargs):
@@ -91,11 +80,11 @@ class NewInit:
             func = self.func_get(self.obj, self.cls)
         else:
             func = self.func_get
-        print("func: ", func)
+        # print("func: ", func)
         has_args = constructor_args != ()
         has_kwargs = constructor_kwargs != {}
-        print("constructor_args: ", constructor_args)
-        print("constructor_kwargs: ", constructor_kwargs)
+        # print("constructor_args: ", constructor_args)
+        # print("constructor_kwargs: ", constructor_kwargs)
         setattr(self.obj, new_type_constructor_args_str, constructor_args[1:]) if not hasattr(
             self.obj, new_type_constructor_args_str
         ) else None
@@ -113,12 +102,12 @@ class NewInit:
         if has_args and has_kwargs:
             func(*constructor_args, **constructor_kwargs)
 
-        print("self.obj; type(self.obj): ", self.obj, type(self.obj))
-        print("self.obj._newtype_init_kwargs_: ", self.obj._newtype_init_kwargs_)
+        # print("self.obj; type(self.obj): ", self.obj, type(self.obj))
+        # print("self.obj._newtype_init_kwargs_: ", self.obj._newtype_init_kwargs_)
 
 
-def NewType(type_: "GenericTypeType", **context) -> "GenericTypeType":
-    class BaseBaseNewType(type_):
+def NewType(type_: "GenericTypeType", **context) -> "GenericTypeType":  # ruff: ignore C901
+    class BaseBaseNewType(type_):  # type: ignore[valid-type, misc]
         def __init_subclass__(cls, **context) -> None:
             super().__init_subclass__(**context)
             for k, v in type_.__dict__.items():
@@ -131,7 +120,7 @@ def NewType(type_: "GenericTypeType", **context) -> "GenericTypeType":
 
     class BaseNewType(BaseBaseNewType):
         def __new__(cls, value, *_args, **_kwargs):
-            print("__new__: ", type_, cls, value, _args, _kwargs)
+            # print("__new__: ", type_, cls, value, _args, _kwargs)
             if type_.__new__ == object.__new__:
                 inst = type_.__new__(cls)
                 value_dict: dict = getattr(value, "__dict__", UNDEFINED)

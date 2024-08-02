@@ -6,6 +6,7 @@ from logging import getLogger
 from pathlib import Path
 
 from setuptools import Extension  # noqa: I001
+from setuptools.command.build_ext import build_ext  # noqa: I001
 from setuptools.dist import Distribution  # noqa: I001
 
 logging.basicConfig(
@@ -33,6 +34,7 @@ ROOT_DIR = Path(__file__).resolve().parent
 
 
 def where_am_i() -> "Path":
+    """Checks if the script is being run in the correct directory (`ROOT_DIR`)."""
     current_dir = Path.cwd()
     if current_dir != ROOT_DIR:
         raise RuntimeError(f"Please run this script in the directory: {ROOT_DIR}")
@@ -47,6 +49,7 @@ where_am_i()
 def get_package_name(
     default_name="simple_python_template",
 ) -> str:  # put a default name if there is
+    """Retrieves the package name from setup.py or setup.cfg, or returns a default name."""
     if default_name is not None:
         return default_name
 
@@ -246,8 +249,7 @@ def copy_output_to_cmd_buildlib(cmd):
 
 
 def build_cython_extensions():
-    """This function builds the Extension modules using Cython"""
-
+    """Builds the extension modules using Cython."""
     extensions = get_extension_modules()
 
     include_dirs = set()
@@ -265,6 +267,7 @@ def build_cython_extensions():
 
     copy_output_to_cmd_buildlib(cmd)
 
+    # clean up only for cython
     for file in C_SOURCE_FILES_GENERATED_FROM_CYTHON:
         remove_cython_metadata(file)
         if REMOVE_HTML_ANNOTATION_FILES:
@@ -277,13 +280,30 @@ def build_cython_extensions():
             LOGGER.info("Html file is removed")
 
 
+def build_c_extensions():
+    """Builds the extension modules using pure C without Cython."""
+    extensions = get_extension_modules()
+    include_dirs = set()
+    for extension in extensions:
+        include_dirs.update(extension.include_dirs)
+    include_dirs = list(include_dirs)
+
+    dist = Distribution({"ext_modules": extensions})
+    cmd = build_ext(dist)
+    cmd.ensure_finalized()
+    cmd.run()
+    LOGGER.info(f"`cmd.build_lib` = {cmd.build_lib}")
+
+    copy_output_to_cmd_buildlib(cmd)
+
+
 if __name__ == "__main__":
     # actual build
     try:
         if USE_CYTHON:
             build_cython_extensions()
         else:
-            raise Exception("Building extension modules using `Cython` is the only choice for now")
+            build_c_extensions()  # Call the new function for pure C builds
     except Exception as err:
         LOGGER.error(f"`build.py` has failed: error = {err}")
         if not ALLOWED_TO_FAIL:

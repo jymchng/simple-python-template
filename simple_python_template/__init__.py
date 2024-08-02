@@ -11,16 +11,11 @@ __all__: list[str] = [
     "NEWTYPE_INIT_KWARGS_STR",
 ]
 
+from simple_python_template._c_extension import Foo, add
 from simple_python_template.lib import (
+    NEWTYPE_INIT_ARGS_STR,
+    NEWTYPE_INIT_KWARGS_STR,
     NewInit,
     NewType,
-    NEWTYPE_INIT_ARGS_STR,
     NewTypeMethod,
-    NEWTYPE_INIT_KWARGS_STR,
 )
-
-from simple_python_template._c_extension import (
-    Foo,
-    add,
-)
-
