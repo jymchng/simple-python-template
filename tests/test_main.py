@@ -5,6 +5,10 @@ import pandas as pd
 import pytest
 
 from simple_python_template import NewType
+from simple_python_template import (
+    add,
+    Foo,
+)
 
 if TYPE_CHECKING:
     from typing import Type
@@ -104,6 +108,20 @@ def test_goodmannric():
     with pytest.raises(Exception):  # noqa: B017
         nric_one = nric_one + "1234567"
 
+def test_add():
+    assert add(5, 5) == 10
+    assert add(5, 6) == 11
+    assert add(5, 7) == 12
+    
+def test_foo():
+    foo = Foo()
+    foo()
+    assert foo.counter == 1
+    foo()
+    assert foo.counter == 2
+    foo()
+    assert foo.counter == 3
+    
 
 class BlockchainAddress(NewType(str), ABC):
     is_blockchain_address = True

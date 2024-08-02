@@ -31,6 +31,10 @@ cdef class Foo:
         # invoke increment
         cpythontemplate.foo_increment(self._object)
 
+    @property
+    def counter(self):
+        return self._object.counter
+
 # Functions declared with cpdef are visible to both cython and python.
 # https://cython.readthedocs.io/en/latest/src/userguide/language_basics.html#python-functions-vs-c-functions
 # https://cython.readthedocs.io/en/latest/src/userguide/language_basics.html#error-return-values
@@ -38,3 +42,6 @@ cpdef float divide(float x, float y) except? 1.23:
     if y == 0.0:
         raise ZeroDivisionError
     return x / y
+
+cpdef int add(int x, int y):
+    return x + y

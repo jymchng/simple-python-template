@@ -16,6 +16,8 @@ logging.basicConfig(
 LOGGER = getLogger(__name__)
 LOGGER.info("Running `build.py`...")
 
+# when using setuptools, you should import setuptools before Cython,
+# otherwise, both might disagree about the class to use.
 USE_CYTHON = False
 try:
     import Cython.Compiler.Options  # pyright: ignore [reportMissingImports]
@@ -40,6 +42,7 @@ def where_am_i() -> "Path":
 
 # pre-build checks; making sure `build.py` is in `ROOT_DIR`
 where_am_i()
+
 
 def get_package_name(
     default_name="simple_python_template",
@@ -143,6 +146,35 @@ def extra_compile_args():
             "/Wno-deprecated-declarations",  # Ignore deprecated declarations
             "/Wno-parentheses-equality",  # Ignore parentheses equality warnings
             "/Wno-unreachable-code",  # Ignore unreachable code warnings
+            "/sdl",
+            "/guard:cf",
+            "/utf-8",
+            "/diagnostics:caret",
+            "/w14165",
+            "/w44242",
+            "/w44254",
+            "/w34287",
+            "/w44296",
+            "/w44365",
+            "/w44388",
+            "/w44464",
+            "/w14545",
+            "/w14546",
+            "/w14547",
+            "/w14549",
+            "/w14555",
+            "/w34619",
+            "/w44774",
+            "/w44777",
+            "/w24826",
+            "/w14905",
+            "/w14906",
+            "/w14928",
+            "/W4",
+            "/permissive-",
+            "/volatile:iso",
+            "/Zc:inline",
+            "/Zc:preprocessor",
         ]
     else:  # UNIX-based systems
         extra_compile_args = [
@@ -153,6 +185,28 @@ def extra_compile_args():
             "-Wno-deprecated-declarations",
             "-Wno-parentheses-equality",
             "-Wno-unreachable-code",  # TODO: This should no longer be necessary with Cython>=3.0.3
+            "-U_FORTIFY_SOURCE",
+            "-D_FORTIFY_SOURCE=3",
+            "-fstack-protector-strong",
+            "-fcf-protection=full",
+            "-fstack-clash-protection",
+            "-Wall",
+            "-Werror",
+            "-Wextra",
+            # "-Wpedantic", # Cython error
+            # "-Wconversion", # Cython error
+            "-Wsign-conversion",
+            # "-Wcast-qual",
+            "-Wformat=2",
+            "-Wundef",
+            # "-Wshadow", # Cython error
+            "-Wcast-align",
+            "-Wunused",
+            "-Wnull-dereference",
+            # "-Wdouble-promotion", # Cython error
+            "-Wimplicit-fallthrough",
+            "-Werror=strict-prototypes",
+            "-Wwrite-strings",
         ]
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
     return extra_compile_args
@@ -182,9 +236,17 @@ def get_extension_modules():
     return extensions
 
 
+def copy_output_to_cmd_buildlib(cmd):
+    for output in cmd.get_outputs():
+        output = Path(output)
+        relative_extension = output.relative_to(cmd.build_lib)
+        LOGGER.info(f"Copying file from `{output}` to `{relative_extension}`")
+        shutil.copyfile(output, relative_extension)
+        LOGGER.info("File copied successfully")
+
+
 def build_cython_extensions():
-    # when using setuptools, you should import setuptools before Cython,
-    # otherwise, both might disagree about the class to use.
+    """This function builds the Extension modules using Cython"""
 
     extensions = get_extension_modules()
 
@@ -201,12 +263,7 @@ def build_cython_extensions():
     cmd.run()
     LOGGER.info(f"`cmd.build_lib` = {cmd.build_lib}")
 
-    for output in cmd.get_outputs():
-        output = Path(output)
-        relative_extension = output.relative_to(cmd.build_lib)
-        LOGGER.info(f"Copying file from `{output}` to `{relative_extension}`")
-        shutil.copyfile(output, relative_extension)
-        LOGGER.info("File copied successfully")
+    copy_output_to_cmd_buildlib(cmd)
 
     for file in C_SOURCE_FILES_GENERATED_FROM_CYTHON:
         remove_cython_metadata(file)
@@ -215,7 +272,8 @@ def build_cython_extensions():
             LOGGER.info(
                 f"Removing html annotation file `{html_associated_file}` associated with `{file}`; "
             )
-            os.unlink(str(html_associated_file))
+            if os.path.exists(str(html_associated_file)):
+                os.unlink(str(html_associated_file))
             LOGGER.info("Html file is removed")
 
 

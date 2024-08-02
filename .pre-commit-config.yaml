@@ -108,3 +108,10 @@ repos:
     - id: codespell
       additional_dependencies:
         - tomli
+
+  - repo: local
+    hooks:
+      - id: clean-build-dist
+        name: Clean build and dist folders
+        entry: bash -c 'rm -rf dist build'
+        language: system
