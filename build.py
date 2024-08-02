@@ -1,0 +1,232 @@
+import logging
+import os
+import shutil
+import sys
+from logging import getLogger
+from pathlib import Path
+
+from setuptools import Extension  # noqa: I001
+from setuptools.dist import Distribution  # noqa: I001
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)s] %(message)s",
+    stream=sys.stdout,
+)
+LOGGER = getLogger(__name__)
+LOGGER.info("Running `build.py`...")
+
+USE_CYTHON = False
+try:
+    import Cython.Compiler.Options  # pyright: ignore [reportMissingImports]
+    from Cython.Build import build_ext, cythonize  # pyright: ignore [reportMissingImports]
+
+    Cython.Compiler.Options.annotate = True
+    USE_CYTHON = True
+except ImportError:
+    LOGGER.info("Unable to import `Cython`, falling back to building only `C` extensions")
+
+# Set ROOT_DIR to the directory of the current file, if in doubt with regards to path, always use relative to `ROOT_DIR`
+ROOT_DIR = Path(__file__).resolve().parent
+
+
+def where_am_i() -> "Path":
+    current_dir = Path.cwd()
+    if current_dir != ROOT_DIR:
+        raise RuntimeError(f"Please run this script in the directory: {ROOT_DIR}")
+    LOGGER.info(f"Running in the correct directory: {current_dir}")
+    return ROOT_DIR
+
+
+# pre-build checks; making sure `build.py` is in `ROOT_DIR`
+where_am_i()
+
+def get_package_name(
+    default_name="simple_python_template",
+) -> str:  # put a default name if there is
+    if default_name is not None:
+        return default_name
+
+    # # Check for pyproject.toml
+    # if os.path.exists("pyproject.toml"):
+    #     with open("pyproject.toml", "rb") as f:  # Open in binary mode for tomlib
+    #         pyproject = loads(f)  # Use tomlib's loads function
+    #     return pyproject.get("tool", {}).get("poetry", {}).get("name", None)
+
+    # Check for setup.py
+    if os.path.exists("setup.py"):
+        with open("setup.py") as f:
+            for line in f:
+                if "name=" in line:
+                    return line.split("name=")[1].strip().strip('"').strip("'")
+
+    # Check for setup.cfg
+    if os.path.exists("setup.cfg"):
+        import configparser
+
+        config = configparser.ConfigParser()
+        config.read("setup.cfg")
+        return config.get("metadata", "name", fallback=None)
+
+    raise Exception(
+        "Unable to determine what is the `PACKAGE_NAME` for this repository, set `default_name` parameter to a default name"
+    )
+
+
+# Constants
+PACKAGE_NAME = get_package_name()
+# Uncomment if library can still function if extensions fail to compile
+# (e.g. slower, python fallback).
+# Don't allow failure if cibuildwheel is running.
+# ALLOWED_TO_FAIL = os.environ.get("CIBUILDWHEEL", "0") != "1"
+ALLOWED_TO_FAIL = False
+REMOVE_HTML_ANNOTATION_FILES = True
+"""`Cython` generates annotated HTML files, set this to `True` for it to be removed."""
+PACKAGE_DIR = ROOT_DIR / PACKAGE_NAME
+C_SOURCE_DIR_NAME = "_c_src"
+C_SOURCE_DIR = ROOT_DIR / PACKAGE_NAME / C_SOURCE_DIR_NAME
+C_SOURCE_FILES = [str(x) for x in C_SOURCE_DIR.rglob("*.c")]
+
+PYX_SOURCE_DIR_NAME = PACKAGE_NAME  # can be different
+PYX_SOURCE_DIR = ROOT_DIR / PYX_SOURCE_DIR_NAME
+PYX_SOURCE_FILES = [str(x) for x in PYX_SOURCE_DIR.rglob("*.pyx")]
+C_SOURCE_FILES_GENERATED_FROM_CYTHON = [str(Path(x).with_suffix(".c")) for x in PYX_SOURCE_FILES]
+
+LANGUAGE = "C"
+C_EXTENSION_MODULE_NAME = "_c_extension"
+
+# Log the constants
+LOGGER.info(f"`PACKAGE_NAME` = {PACKAGE_NAME}")
+LOGGER.info(f"`ALLOWED_TO_FAIL` = {ALLOWED_TO_FAIL}")
+LOGGER.info(f"`C_SOURCE_FILES` = {C_SOURCE_FILES}")
+LOGGER.info(f"`PYX_SOURCE_FILES` = {PYX_SOURCE_FILES}")
+
+
+def remove_cython_metadata(file_path):
+    """
+    Removes Cython metadata from a given C file.
+
+    Args:
+        file_path (str): The path to the C file from which to remove metadata.
+    """
+    with open(file_path) as file:
+        lines = file.readlines()
+
+    # Find the start and end of the metadata block
+    start_index = next(
+        (i for i, line in enumerate(lines) if line.strip() == "/* BEGIN: Cython Metadata"), None
+    )
+    end_index = next(
+        (i for i, line in enumerate(lines) if line.strip() == "END: Cython Metadata */"), None
+    )
+
+    # If both start and end indices are found, remove the metadata
+    if start_index is not None and end_index is not None:
+        del lines[start_index : end_index + 1]
+
+    # Write the modified lines back to the file
+    with open(file_path, "w") as file:
+        file.writelines(lines)
+    LOGGER.info(f"Finished removing Cython metadata from {file_path}")
+
+
+def extra_compile_args():
+    """A function to get all the extra compile arguments for the extension modules.
+    Define your own arguments here.
+    """
+    if os.name == "nt":  # Windows
+        extra_compile_args = [
+            "/O3",
+            "/Wall",  # Enable all warnings
+            "/Werror",  # Treat warnings as errors
+            "/Wno-unreachable-code-fallthrough",  # Ignore fallthrough warnings
+            "/Wno-deprecated-declarations",  # Ignore deprecated declarations
+            "/Wno-parentheses-equality",  # Ignore parentheses equality warnings
+            "/Wno-unreachable-code",  # Ignore unreachable code warnings
+        ]
+    else:  # UNIX-based systems
+        extra_compile_args = [
+            "-O3",
+            "-Wall",
+            "-Werror",
+            "-Wno-unreachable-code-fallthrough",
+            "-Wno-deprecated-declarations",
+            "-Wno-parentheses-equality",
+            "-Wno-unreachable-code",  # TODO: This should no longer be necessary with Cython>=3.0.3
+        ]
+    extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
+    return extra_compile_args
+
+
+def get_extension_modules():
+    # Relative to project root directory
+    include_dirs = [
+        str(PACKAGE_DIR),
+        str(C_SOURCE_DIR),
+    ]
+    LOGGER.info(f"in function `get_extension_modules`; `include_dirs` = {include_dirs}")
+    extensions = [
+        Extension(
+            # Your .pyx file will be available to cpython at this location.
+            f"{PACKAGE_NAME}.{C_EXTENSION_MODULE_NAME}",
+            [
+                # ".c" and ".pyx" source file paths
+                *PYX_SOURCE_FILES,
+                *C_SOURCE_FILES,
+            ],
+            include_dirs=include_dirs,
+            extra_compile_args=extra_compile_args(),
+            language=LANGUAGE,
+        ),
+    ]
+    return extensions
+
+
+def build_cython_extensions():
+    # when using setuptools, you should import setuptools before Cython,
+    # otherwise, both might disagree about the class to use.
+
+    extensions = get_extension_modules()
+
+    include_dirs = set()
+    for extension in extensions:
+        include_dirs.update(extension.include_dirs)
+    include_dirs = list(include_dirs)
+
+    ext_modules = cythonize(extensions, include_path=include_dirs, language_level=3)
+    LOGGER.info(f"inside function `build_cython_extensions`; `ext_modules` = {ext_modules}")
+    dist = Distribution({"ext_modules": ext_modules})
+    cmd = build_ext(dist)
+    cmd.ensure_finalized()
+    cmd.run()
+    LOGGER.info(f"`cmd.build_lib` = {cmd.build_lib}")
+
+    for output in cmd.get_outputs():
+        output = Path(output)
+        relative_extension = output.relative_to(cmd.build_lib)
+        LOGGER.info(f"Copying file from `{output}` to `{relative_extension}`")
+        shutil.copyfile(output, relative_extension)
+        LOGGER.info("File copied successfully")
+
+    for file in C_SOURCE_FILES_GENERATED_FROM_CYTHON:
+        remove_cython_metadata(file)
+        if REMOVE_HTML_ANNOTATION_FILES:
+            html_associated_file = Path(file).with_suffix(".html")
+            LOGGER.info(
+                f"Removing html annotation file `{html_associated_file}` associated with `{file}`; "
+            )
+            os.unlink(str(html_associated_file))
+            LOGGER.info("Html file is removed")
+
+
+if __name__ == "__main__":
+    # actual build
+    try:
+        if USE_CYTHON:
+            build_cython_extensions()
+        else:
+            raise Exception("Building extension modules using `Cython` is the only choice for now")
+    except Exception as err:
+        LOGGER.error(f"`build.py` has failed: error = {err}")
+        if not ALLOWED_TO_FAIL:
+            raise
