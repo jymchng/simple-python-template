@@ -55,18 +55,17 @@ function check_installed_python() {
         exit 2
     fi
 
-    for v in 12 11 10 9
+    for v in 12 11 10 9 8
     do
         PYTHON="python3.${v}"
         which $PYTHON
         if [ $? -eq 0 ]; then
-            echo "using ${PYTHON}"
-            check_installed_pip
-            return
+            echo "${PYTHON} installed"
         fi
+        check_installed_pip
     done
 
-    echo "No usable python found. Please make sure to have python3.9 or newer installed."
+    echo "No usable python found. Please make sure to have python3.8 or newer installed."
     exit 1
 }
 
@@ -201,8 +200,62 @@ function check_installed_clang_format() {
     fi
 }
 
-# Call the function to prompt the user
-append_activate_venv_function
+function install_pyenv() {
+    if ! command -v pyenv &> /dev/null; then
+        echo "Pyenv is not installed. Installing Pyenv..."
+
+        # Check if the user is on Windows
+        if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+            echo "Note: Pyenv does not officially support Windows and does not work outside the Windows Subsystem for Linux."
+            echo "For Windows users, we recommend using @kirankotari's pyenv-win fork, which installs native Windows Python versions."
+            echo "You can find it here: https://github.com/pyenv-win/pyenv-win"
+        else
+            # Attempt to install pyenv and exit if it fails
+            if ! curl https://pyenv.run | bash; then
+                echo "Failed to install Pyenv. Exiting."
+                exit 1
+            fi
+            echo "Pyenv installed successfully."
+        fi
+    else
+        echo "Pyenv is already installed."
+    fi
+}
+
+# Ask the user for permission to make scripts executable
+read -p "Do you want to make all scripts in the 'scripts' directory executable? (yes/no): " response
+if [[ "$response" == "yes" || "$response" == "y" ]]; then
+    chmod +x scripts/*.sh 2>/dev/null
+    if [ $? -eq 0 ]; then
+        echo "All scripts in the 'scripts' directory have been made executable."
+    else
+        echo "Error: Failed to make scripts executable. Please check permissions."
+    fi
+else
+    echo "Skipping making scripts executable."
+fi
+
+# Call the function to check for Pyenv installation
+install_pyenv
+
+# Check if pyenv commands are already in ~/.bashrc
+if
+   grep -q 'eval "\$(pyenv init -)"' ~/.bashrc; then
+    echo "Pyenv access is already configured in ~/.bashrc."
+else
+    # Ask the user if they want quicker access to pyenv on terminal activation
+    read -p "Do you want quicker access to 'pyenv' on terminal activation? (yes/no): " pyenv_response
+
+    if [[ "$pyenv_response" == "yes" || "$pyenv_response" == "y" ]]; then
+        echo '' >> ~/.bashrc
+        echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
+        echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
+        echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+        echo "Pyenv access added to ~/.bashrc. Please restart your terminal."
+    else
+        echo "For more information on setting up Pyenv, visit: https://github.com/pyenv/pyenv?tab=readme-ov-file#set-up-your-shell-environment-for-pyenv"
+    fi
+fi
 
 # Call the function to prompt the user
 append_activate_venv_function

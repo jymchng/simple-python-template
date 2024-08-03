@@ -1,13 +1,14 @@
 import logging
+from logging import getLogger
 import os
+from pathlib import Path
 import shutil
 import sys
-from logging import getLogger
-from pathlib import Path
 
 from setuptools import Extension  # noqa: I001
 from setuptools.command.build_ext import build_ext  # noqa: I001
 from setuptools.dist import Distribution  # noqa: I001
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -21,8 +22,9 @@ LOGGER.info("Running `build.py`...")
 # otherwise, both might disagree about the class to use.
 USE_CYTHON = False
 try:
+    from Cython.Build import build_ext  # pyright: ignore [reportMissingImports]
+    from Cython.Build import cythonize
     import Cython.Compiler.Options  # pyright: ignore [reportMissingImports]
-    from Cython.Build import build_ext, cythonize  # pyright: ignore [reportMissingImports]
 
     Cython.Compiler.Options.annotate = True
     USE_CYTHON = True
@@ -72,7 +74,7 @@ def get_package_name(
 
         config = configparser.ConfigParser()
         config.read("setup.cfg")
-        return config.get("metadata", "name", fallback=None)
+        return config.get("metadata", "name")
 
     raise Exception(
         "Unable to determine what is the `PACKAGE_NAME` for this repository, set `default_name` parameter to a default name"
@@ -87,7 +89,6 @@ PACKAGE_NAME = get_package_name()
 # ALLOWED_TO_FAIL = os.environ.get("CIBUILDWHEEL", "0") != "1"
 ALLOWED_TO_FAIL = False
 REMOVE_HTML_ANNOTATION_FILES = True
-"""`Cython` generates annotated HTML files, set this to `True` for it to be removed."""
 PACKAGE_DIR = ROOT_DIR / PACKAGE_NAME
 C_SOURCE_DIR_NAME = "_c_src"
 C_SOURCE_DIR = ROOT_DIR / PACKAGE_NAME / C_SOURCE_DIR_NAME
@@ -184,9 +185,9 @@ def extra_compile_args():
             "-O3",
             "-Wall",
             "-Werror",
-            "-Wno-unreachable-code-fallthrough",
-            "-Wno-deprecated-declarations",
-            "-Wno-parentheses-equality",
+            # "-Wno-unreachable-code-fallthrough",
+            # "-Wno-deprecated-declarations",
+            # "-Wno-parentheses-equality",
             "-Wno-unreachable-code",  # TODO: This should no longer be necessary with Cython>=3.0.3
             "-U_FORTIFY_SOURCE",
             "-D_FORTIFY_SOURCE=3",
@@ -210,6 +211,8 @@ def extra_compile_args():
             "-Wimplicit-fallthrough",
             "-Werror=strict-prototypes",
             "-Wwrite-strings",
+            # "-Wno-warning=discarded-qualifiers", # custom.c:44:39/30/47
+            "-Wno-error=discarded-qualifiers", # custom.c:44:39/30/47
         ]
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
     return extra_compile_args
@@ -222,19 +225,42 @@ def get_extension_modules():
         str(C_SOURCE_DIR),
     ]
     LOGGER.info(f"in function `get_extension_modules`; `include_dirs` = {include_dirs}")
+
+    # define each of the extensions yourself or use some functions to collate them
+    custom_ext = Extension(
+        f"{PACKAGE_NAME}.custom", # anything within it can be import with `from simple_python_template.custom import (Custom, )` within Python
+        [
+            str(C_SOURCE_DIR / "custom.c") # this is where the source C files is
+        ],
+        include_dirs=include_dirs,
+        extra_compile_args=extra_compile_args(),
+        language=LANGUAGE,
+    )
+    _c_extension_ext = Extension(
+        f"{PACKAGE_NAME}.{C_EXTENSION_MODULE_NAME}", # anything within it can be import with `from simple_python_template._c_extension import (Foo, )`
+        [
+            str(C_SOURCE_DIR / "foo.c"),
+            *PYX_SOURCE_FILES,
+        ],
+        include_dirs=include_dirs,
+        extra_compile_args=extra_compile_args(),
+        language=LANGUAGE,
+    )
     extensions = [
-        Extension(
-            # Your .pyx file will be available to cpython at this location.
-            f"{PACKAGE_NAME}.{C_EXTENSION_MODULE_NAME}",
-            [
-                # ".c" and ".pyx" source file paths
-                *PYX_SOURCE_FILES,
-                *C_SOURCE_FILES,
-            ],
-            include_dirs=include_dirs,
-            extra_compile_args=extra_compile_args(),
-            language=LANGUAGE,
-        ),
+        # Extension(
+        #     # Your .pyx file will be available to cpython at this location.
+        #     f"{PACKAGE_NAME}.{C_EXTENSION_MODULE_NAME}",
+        #     [
+        #         # ".c" and ".pyx" source file paths
+        #         *PYX_SOURCE_FILES,
+        #         *C_SOURCE_FILES,
+        #     ],
+        #     include_dirs=include_dirs,
+        #     extra_compile_args=extra_compile_args(),
+        #     language=LANGUAGE,
+        # ),
+        _c_extension_ext,
+        custom_ext,
     ]
     return extensions
 
@@ -305,6 +331,6 @@ if __name__ == "__main__":
         else:
             build_c_extensions()  # Call the new function for pure C builds
     except Exception as err:
-        LOGGER.error(f"`build.py` has failed: error = {err}")
+        LOGGER.exception(f"`build.py` has failed: error = {err}")
         if not ALLOWED_TO_FAIL:
             raise

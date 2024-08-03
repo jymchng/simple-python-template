@@ -36,7 +36,7 @@ simple-python-template = "simple_python_template.cli.main:run_app"
 
 [tool.poetry.dependencies]
 # Be as loose as possible if writing a library.
-python = ">=3.9,<3.13"
+python = ">=3.8,<3.13"
 typing-extensions = "^4.12.2"
 rich = ">=10.11.0"
 cyclopts = "^2.9.3"
@@ -70,8 +70,8 @@ types-tabulate = "0.9.0.20240106"
 types-python-dateutil = "2.9.0.20240316"
 coveralls = ">=4.0.1"
 creosote = "^3.0.2"
-pre-commit = ">=3.7.1"
-pandas = "^2.2.2"
+pre-commit = ">=3"
+pandas = ">=1"
 twine = "^5.1.1"
 
 [tool.poetry.group.debug]
@@ -135,6 +135,7 @@ exclude = [
     ".env",
     "venv",
     ".venv",
+    "build.py",
 ]
 
 
@@ -215,6 +216,10 @@ extend-ignore = [
     "NPY002", # Numpy legacy random generator
 ]
 
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+known-first-party = ["freqtrade_client"]
+
 [tool.ruff.lint.flake8-bugbear]
 # Allow default arguments like, e.g., `data: List[str] = fastapi.Query(None)`.
 extend-immutable-calls = [
@@ -227,6 +232,9 @@ extend-immutable-calls = [
 
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = [
@@ -258,6 +266,7 @@ convention = "numpy"
 "ft_client/test_client/**/*.py" = [
     "S101", # allow assert in tests
 ]
+
 [tool.ruff.lint.pep8-naming]
 staticmethod-decorators = ["pydantic.validator", "pydantic.root_validator"]
 
@@ -278,12 +287,12 @@ zip-safe = false
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["freqtrade*"]
+include = ["simple_python_template*"]
 exclude = ["tests", "tests.*", "user_data", "user_data*"]
 namespaces = true
 
 [tool.setuptools.dynamic]
-version = { attr = "freqtrade.__version__" }
+version = { attr = "simple_python_template.__version__" }
 
 [tool.black]
 line-length = 100
@@ -308,9 +317,9 @@ exclude = '''
 
 [tool.isort]
 line_length = 100
-profile = "black"
+profile = "google"
 # multi_line_output=3
-lines_after_imports = 1
+lines_after_imports = 2
 skip_glob = [
     "**/.env*",
     "**/env/*",
@@ -330,7 +339,7 @@ addopts = "--dist loadscope"
 ignore_missing_imports = true
 namespace_packages = false
 warn_unused_ignores = true
-exclude = ['^build_helpers\.py$', '^ft_client/build/.*$']
+exclude = ['^build_helpers\.py$', '^ft_client/build/.*$', 'build.py', 'tests/*', 'docs/*', 'scripts/*', '/*.sh', 'simple_python_template/*.pyi']
 # plugins = [""]
 
 [[tool.mypy.overrides]]
@@ -342,18 +351,10 @@ ignore_errors = true
 module = "telegram.*"
 implicit_optional = true
 
-# [tool.ruff.lint.mccabe]
-# max-complexity = 12
-
-
-# [tool.ruff.lint.isort]
-# lines-after-imports = 2
-# known-first-party = ["freqtrade_client"]
-
 [tool.flake8]
 # Default from https://flake8.pycqa.org/en/latest/user/options.html#cmdoption-flake8-ignore
 # minus E226
 ignore = ["E121", "E123", "E126", "E24", "E203", "E704", "W503", "W504"]
 max-line-length = 100
 max-complexity = 12
-exclude = [".git", "__pycache__", ".eggs", "user_data", ".venv", ".env"]
+exclude = [".git", "__pycache__", ".eggs", "user_data", ".venv", ".env", "build.py"]

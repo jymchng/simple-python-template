@@ -123,6 +123,7 @@ This list of tools are opinionated, feel free to remove any by not installing it
 | Curl          | A command-line tool for transferring data with URLs, used to download the get-pip.py script. | [Curl](https://curl.se/)                    |
 | Sed           | A stream editor used for parsing and transforming text, specifically for renaming package instances in files. | [Sed](https://www.gnu.org/software/sed/)   |
 | Bash          | The scripting language used to write the entire script.                                       | [Bash](https://www.gnu.org/software/bash/)  |
+|Pyenv| It is a simple Python version management tool that allows you to easily switch between multiple versions of Python. It helps manage different Python environments for different projects seamlessly. | [Pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#set-up-your-shell-environment-for-pyenv) |
 
 # List of Tools Used for Python
 
@@ -160,6 +161,9 @@ This list of tools are opinionated, feel free to remove any by removing its occu
 |`TESTS_DIR`|The directory where your test files are located. This is where you will place your test cases to ensure your code functions as expected. Typically, this directory contains files that start with `test_` or end with `_test.py`.|
 
 ## Commands
+
+0. Decide on a Minimally Supported Python Version (MSPV), e.g. Python 3.8.
+This is because, you can code out your library using
 
 1. Run `init.sh`
 If you're on Windows, you should download Git bash.
@@ -245,6 +249,59 @@ To run, use:
 ```bash
 bash scripts/quick_tests.sh
 ```
+
+## create_venv.sh
+
+The `create_venv.sh` script is designed to simplify the process of creating a Python virtual environment based on a specified Python version. This script allows you to specify either an exact version (e.g., `3.8.17`) or a major and minor version (e.g., `3.8`), and it will automatically find the appropriate version installed via `pyenv`.
+
+### Functionality
+
+1. **Argument Handling**: The script requires one argument, which is the desired Python version. If no argument is provided, it displays usage instructions and exits.
+
+2. **Exact Version Check**: It first checks if the exact version directory exists in the `$(PYENV_ROOT)/versions` directory. If it does, the script uses that version directly.
+
+3. **Finding the Largest Version**: If the exact version is not found, the script searches for the largest available version that matches the specified major and minor version. It iterates through the directories in `$(PYENV_ROOT)/versions` that start with the specified version and selects the highest version based on the directory names.
+
+4. **Creating the Virtual Environment**: Once the appropriate version is determined, the script uses the corresponding Python executable to create a virtual environment named `.venv` in the current working directory.
+
+5. **Error Handling**: The script includes error handling to notify the user if no matching Python version is found or if the Python executable is not available.
+
+### Usage
+
+To use the script, run the following command in your terminal:
+
+```
+bash scripts/create_venv.sh 3.8 # to create `./.venv` virtual environment in $PWD
+```
+
+# Testing with Docker
+
+This project includes a `Dockerfile_testing` that provides a convenient and isolated environment for building and testing the application using Docker. This ensures that the application behaves consistently across different environments and eliminates issues related to local dependencies.
+
+## Features
+- **Isolated Environment**: The Dockerfile sets up a clean environment with all necessary dependencies, ensuring that tests run in a consistent context.
+- **Automated Dependency Management**: The Dockerfile uses Poetry to manage dependencies, making it easy to install the required packages without manual intervention.
+- **Coverage Reporting**: The testing process includes coverage reporting, allowing you to see how much of your code is covered by tests.
+- **Multi-Stage Build**: The Dockerfile employs a multi-stage build process, separating the build and runtime environments. This results in a smaller final image size by excluding unnecessary build dependencies.
+
+## Usage
+To use the `Dockerfile_testing` for testing your application, follow these steps:
+
+1. **Build the Docker Image**:
+   Run the following command in the root directory of your project to build the Docker image:
+   ```bash
+   docker build -f Dockerfile_testing -t testing_in_docker .
+   ```
+
+2. **Run the Tests**:
+   After building the image, you can run the tests by executing:
+   ```bash
+   docker run --rm testing_in_docker
+   ```
+   This command will run the tests defined in your project, and you will see the output in your terminal.
+
+3. **Review Coverage Reports**:
+   The test run will include coverage reporting. Review the output to see which parts of your code are covered by tests and identify areas for improvement.
 
 # Good Articles and Answers
 

@@ -1,11 +1,29 @@
 exclude: ^(poetry.lock|.idea/)
 repos:
+#- repo : https: //github.com/astral-sh/ruff-pre-commit
+#rev : "v0.4.8"
+#hooks:
+#- id : ruff
+#- id : ruff - format
+
+#- repo : https: //github.com/pycqa/isort
+#rev : "5.13.2"
+#hooks:
+#- id : isort
+#name : isort(python)
+# #stages : [push]
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.4.8"
+#Ruff version.
+    rev: v0.5.6
     hooks:
+#Run the linter.
       - id: ruff
+        types_or: [ python, pyi, jupyter ]
         args: [--fix, --exit-non-zero-on-fix]
+#Run the formatter.
       - id: ruff-format
+        types_or: [ python, pyi, jupyter ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -43,44 +61,32 @@ repos:
         additional_dependencies:
           - tomli
 
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.366
-    hooks:
-      - id: pyright
+#Too strict
+#- repo : https: //github.com/RobertCraigie/pyright-python
+#rev : v1 .1.366
+#hooks:
+#- id : pyright
 
   - repo: https://github.com/pycqa/flake8
     rev: "7.1.0"
     hooks:
       - id: flake8
         additional_dependencies: [Flake8-pyproject]
-        # stages: [push]
+#stages : [push]
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.10.1"
-    hooks:
-      - id: mypy
-        exclude: build_helpers
-        additional_dependencies:
-          - types-cachetools==5.4.0.20240717
-          - types-filelock==3.2.7
-          - types-requests==2.32.0.20240712
-          - types-tabulate==0.9.0.20240106
-          - types-python-dateutil==2.9.0.20240316
-          - SQLAlchemy==2.0.31
-        # stages: [push]
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: "v1.10.1"
+  #   hooks:
+  #     - id: mypy
+  #       exclude: build, tests, build.py, docs
+  #       additional_dependencies:
+  #         - types-cachetools==5.4.0.20240717
+  #         - types-filelock==3.2.7
+  #         - types-requests==2.32.0.20240712
+  #         - types-tabulate==0.9.0.20240106
+  #         - types-python-dateutil==2.9.0.20240316
+  #         - SQLAlchemy==2.0.31
 
-  - repo: https://github.com/pycqa/isort
-    rev: "5.13.2"
-    hooks:
-      - id: isort
-        name: isort (python)
-        # stages: [push]
-
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    # Ruff version.
-    rev: 'v0.5.2'
-    hooks:
-      - id: ruff
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -113,5 +119,12 @@ repos:
     hooks:
       - id: clean-build-dist
         name: Clean build and dist folders
-        entry: bash -c 'rm -rf dist build'
+        entry: bash -c 'rm -rf dist build && rm -f simple_python_template/*.so && rm -f simple_python_template/*.pyd'
         language: system
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.1
+    hooks:
+    - id: mypy
+      args: ["--ignore-missing-imports", "--scripts-are-modules", "--exclude", "^tests/$", "--exclude", "\\.*build.py$"]
+      exclude: tests/

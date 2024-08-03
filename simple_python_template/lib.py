@@ -1,17 +1,24 @@
 from typing import TYPE_CHECKING
 
+
 NEWTYPE_INIT_ARGS_STR = "_newtype_init_args_"
 NEWTYPE_INIT_KWARGS_STR = "_newtype_init_kwargs_"
 UNDEFINED = object()
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Tuple, Type, TypeVar
+    from typing import Any, Callable, Dict, Type, TypeVar
 
-    GenericTypeType = TypeVar("GenericTypeType", bound=type)
+    T = TypeVar("T")
 
 
 class NewTypeMethod:
     def __init__(self, func: "Callable", wrapped_cls: "Type"):
+        """Initializes the NewTypeMethod with a callable and the class it wraps.
+
+        Args:
+            func (Callable): The function to wrap.
+            wrapped_cls (Type): The class that the function is associated with.
+        """
         if hasattr(func, "__get__"):
             self.func_get = func.__get__
             self.has_get = True
@@ -21,15 +28,32 @@ class NewTypeMethod:
         self.wrapped_cls = wrapped_cls
 
     def __get__(self, inst, owner):
+        """Retrieves the instance and owner for the descriptor.
+
+        Args:
+            inst: The instance of the class.
+            owner: The owner class of the descriptor.
+
+        Returns
+        -------
+            self: The NewTypeMethod instance.
+        """
         self.obj = inst
         self.cls = owner
         return self
 
-    def __call__(self, *args, **kwargs):
-        if self.has_get:
-            func = self.func_get(self.obj, self.wrapped_cls)
-        else:
-            func = self.func_get
+    def __call__(self, *args, **kwargs):  # noqa: C901
+        """Calls the wrapped function, handles the initialization of the wrapped class if necessary.
+
+        Args:
+            *args: Positional arguments to pass to the wrapped function.
+            **kwargs: Keyword arguments to pass to the wrapped function.
+
+        Returns
+        -------
+            The result of the wrapped function or an instance of the wrapped class.
+        """
+        func = self.func_get(self.obj, self.wrapped_cls) if self.has_get else self.func_get
         has_args = args != ()
         has_kwargs = kwargs != {}
         if not has_args and not has_kwargs:
@@ -60,6 +84,13 @@ class NewTypeMethod:
 
 class NewInit:
     def __init__(self, constructor):
+        """
+
+        Initializes the NewInit with a constructor.
+
+        Args:
+            constructor: The constructor to wrap.
+        """
         if hasattr(constructor, "__get__"):
             self.func_get = constructor.__get__
             self.has_get = True
@@ -68,18 +99,31 @@ class NewInit:
             self.has_get = False
 
     def __get__(self, obj, owner):
+        """Retrieves the object and owner for the descriptor.
+
+        Args:
+            obj: The instance of the class.
+            owner: The owner class of the descriptor.
+
+        Returns
+        -------
+            self: The NewInit instance.
+        """
         self.obj = obj
         self.cls = owner
         return self
 
     def __call__(self, *constructor_args, **constructor_kwargs):
+        """Calls the wrapped constructor with the provided arguments.
+
+        Args:
+            *constructor_args: Positional arguments to pass to the constructor.
+            **constructor_kwargs: Keyword arguments to pass to the constructor.
+        """
         new_type_constructor_args_str = NEWTYPE_INIT_ARGS_STR
         new_type_constructor_kwargs_str = NEWTYPE_INIT_KWARGS_STR
 
-        if self.has_get:
-            func = self.func_get(self.obj, self.cls)
-        else:
-            func = self.func_get
+        func = self.func_get(self.obj, self.cls) if self.has_get else self.func_get
         # print("func: ", func)
         has_args = constructor_args != ()
         has_kwargs = constructor_kwargs != {}
@@ -91,8 +135,10 @@ class NewInit:
         setattr(self.obj, new_type_constructor_kwargs_str, constructor_kwargs) if not hasattr(
             self.obj, new_type_constructor_kwargs_str
         ) else None
-        # constructor_args = (getattr(self.obj, new_type_constructor_args_str, UNDEFINED) is not UNDEFINED) or constructor_args
-        # constructor_kwargs = (getattr(self.obj, new_type_constructor_kwargs_str, UNDEFINED) is not UNDEFINED) or constructor_kwargs
+        # constructor_args = (getattr(self.obj, new_type_constructor_args_str, UNDEFINED) is not
+        # UNDEFINED) or constructor_args
+        # constructor_kwargs = (getattr(self.obj, new_type_constructor_kwargs_str, UNDEFINED) is not
+        # UNDEFINED) or constructor_kwargs
         if not has_args and not has_kwargs:
             func()
         if not has_args and has_kwargs:
@@ -106,7 +152,21 @@ class NewInit:
         # print("self.obj._newtype_init_kwargs_: ", self.obj._newtype_init_kwargs_)
 
 
-def NewType(type_: "GenericTypeType", **context) -> "GenericTypeType":  # ruff: ignore C901
+def NewType(  # noqa: C901,N802
+    type_: "Type[T]",  # noqa: N802
+    **context: "Dict[str, Any]",
+) -> "Type[T]":  # noqa: D205
+    """Creates a new type used to define new types with additional behavior.
+
+    Args:
+        type_ (Type[T]): The base type to create a new type from.
+        **context: Additional context for the new type.
+
+    Returns
+    -------
+        tNT: A new type that behaves like the specified base type.
+    """
+
     class BaseBaseNewType(type_):  # type: ignore[valid-type, misc]
         def __init_subclass__(cls, **context) -> None:
             super().__init_subclass__(**context)
@@ -115,8 +175,7 @@ def NewType(type_: "GenericTypeType", **context) -> "GenericTypeType":  # ruff: 
                     setattr(cls, k, NewTypeMethod(v, type_))
                 elif k not in object.__dict__:
                     setattr(cls, k, v)
-            cls.__init__ = NewInit(cls.__init__)
-            return cls
+            cls.__init__ = NewInit(cls.__init__)  # type: ignore[method-assign]
 
     class BaseNewType(BaseBaseNewType):
         def __new__(cls, value, *_args, **_kwargs):

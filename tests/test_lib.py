@@ -4,11 +4,8 @@ from typing import TYPE_CHECKING
 import pandas as pd
 import pytest
 
-from simple_python_template import NewType
-from simple_python_template import (
-    add,
-    Foo,
-)
+from simple_python_template import Foo, NewType, add
+
 
 if TYPE_CHECKING:
     from typing import Type
@@ -29,9 +26,9 @@ class NRIC(NewType(str)):
 
     @classmethod
     def __newtype__(cls, nric: "str"):
-        alpha_ST = ("J", "Z", "I", "H", "G", "F", "E", "D", "C", "B", "A")
-        alpha_GF = ("X", "W", "U", "T", "R", "Q", "P", "N", "M", "L", "K")
-        alpha_M = ("K", "L", "J", "N", "P", "Q", "R", "T", "U", "W", "X")
+        alpha_st = ("J", "Z", "I", "H", "G", "F", "E", "D", "C", "B", "A")
+        alpha_gf = ("X", "W", "U", "T", "R", "Q", "P", "N", "M", "L", "K")
+        alpha_m = ("K", "L", "J", "N", "P", "Q", "R", "T", "U", "W", "X")
         assert len(str(nric)) == 9, f"NRIC length must be 9, it is `{len(nric)}`"
         assert nric[0] in [
             "S",
@@ -50,12 +47,12 @@ class NRIC(NewType(str)):
             offset = 3
         expected_checksum = (offset + weighted_sum) % 11
         if nric[0] in ["S", "T"]:
-            assert alpha_ST[expected_checksum] == nric[8], "Checksum is not right"
+            assert alpha_st[expected_checksum] == nric[8], "Checksum is not right"
         elif nric[0] == "M":
             expected_checksum = 10 - expected_checksum
-            assert alpha_M[expected_checksum] == nric[8]
+            assert alpha_m[expected_checksum] == nric[8]
         else:
-            assert alpha_GF[expected_checksum] == nric[8]
+            assert alpha_gf[expected_checksum] == nric[8]
 
 
 def test_nric():
@@ -108,11 +105,13 @@ def test_goodmannric():
     with pytest.raises(Exception):  # noqa: B017
         nric_one = nric_one + "1234567"
 
+
 def test_add():
     assert add(5, 5) == 10
     assert add(5, 6) == 11
     assert add(5, 7) == 12
-    
+
+
 def test_foo():
     foo = Foo()
     foo()
@@ -121,7 +120,7 @@ def test_foo():
     assert foo.counter == 2
     foo()
     assert foo.counter == 3
-    
+
 
 class BlockchainAddress(NewType(str), ABC):
     is_blockchain_address = True
@@ -133,7 +132,7 @@ class BlockchainAddress(NewType(str), ABC):
 
     @staticmethod
     @abstractmethod
-    def _validate_address(val: " str") -> "bool":
+    def _validate_address(val: "str") -> "bool":
         raise NotImplementedError
 
     @classmethod
@@ -160,9 +159,7 @@ class EthereumAddress(BlockchainAddress):
         import re
 
         # Ethereum addresses are 40 hexadecimal characters prefixed with '0x'
-        if not re.match(r"^0x[0-9a-fA-F]{40}$", address):
-            return False
-        return True
+        return re.match("^0x[0-9a-fA-F]{40}$", address)
 
 
 def test_ethereum_address():
@@ -233,10 +230,10 @@ def test_bounded_positive_int():
     assert ten.args == (1, 2, 3)
     assert ten.middle() == 11
 
-    with pytest.raises(Exception):
+    with pytest.raises(AssertionError):
         ten += 20
 
-    with pytest.raises(Exception):
+    with pytest.raises(AssertionError):
         ten -= 30
 
     assert ten == 10
