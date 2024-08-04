@@ -25,7 +25,9 @@ include = [
 ] # Compiled extensions
 
 [tool.builddotpy]
-hello = "bye"
+vendors = [
+    {"name" = "pyawaitable", "downloadZipURL" = "https://github.com/ZeroIntensity/pyawaitable/releases/download/v1.1.0/pyawaitable-vendor.zip"},
+]
 
 [tool.poetry.build]
 script = "build.py"
@@ -357,4 +359,4 @@ implicit_optional = true
 ignore = ["E121", "E123", "E126", "E24", "E203", "E704", "W503", "W504"]
 max-line-length = 100
 max-complexity = 12
-exclude = [".git", "__pycache__", ".eggs", "user_data", ".venv", ".env", "build.py"]
+exclude = [".git", "__pycache__", ".eggs", "user_data", ".venv", ".env", "build.py", "docs/*.py"]

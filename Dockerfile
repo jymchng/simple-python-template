@@ -25,8 +25,6 @@ RUN poetry install --without=dev,docs \
     && rm -rf .git
 
 
-
-
 FROM ubuntu:20.04
 
 ENV PATH ".venv/bin:$PATH"

@@ -126,5 +126,6 @@ repos:
     rev: v1.11.1
     hooks:
     - id: mypy
-      args: ["--ignore-missing-imports", "--scripts-are-modules", "--exclude", "^tests/$", "--exclude", "\\.*build.py$"]
-      exclude: tests/
+      files: '(simple_python_template)/.*\.py$'  # Single quote critical due to escape character '\' used in RegEx search string (see YAML - 7.3 Flow Scalar Styles)
+      args: [--config-file=./pyproject.toml, --ignore-missing-imports, --scripts-are-modules]
+      exclude: '(docs|tests)/.*\.py$'

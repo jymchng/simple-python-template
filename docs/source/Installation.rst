@@ -1,11 +1,11 @@
 Installation
 ============
 
-pythontemplate requires Python ``>=3.8`` and can be installed from pypi via:
+simple_python_template requires Python ``>=3.8`` and can be installed from pypi via:
 
 .. code-block:: bash
 
-   python -m pip install pythontemplate
+   python -m pip install simple_python_template
 
 
 To install directly from github, you can run:
@@ -19,5 +19,5 @@ For development, its recommended to use Poetry:
 .. code-block:: bash
 
    git clone https://github.com/GIT_USERNAME/GIT_REPONAME.git
-   cd pythontemplate
+   cd simple_python_template
    poetry install

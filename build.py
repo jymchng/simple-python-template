@@ -40,6 +40,12 @@ def where_am_i() -> "Path":
     current_dir = Path.cwd()
     if current_dir != ROOT_DIR:
         raise RuntimeError(f"Please run this script in the directory: {ROOT_DIR}")
+
+    # Check for at least one required file in ROOT_DIR
+    required_files = ["pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "requirements-dev.txt"]
+    if not any((ROOT_DIR / file).exists() for file in required_files):
+        raise RuntimeError("`build.py` should be located at the root directory of the project")
+
     LOGGER.info(f"Running in the correct directory: {current_dir}")
     return ROOT_DIR
 
@@ -90,14 +96,19 @@ PACKAGE_NAME = get_package_name()
 ALLOWED_TO_FAIL = False
 REMOVE_HTML_ANNOTATION_FILES = True
 PACKAGE_DIR = ROOT_DIR / PACKAGE_NAME
-C_SOURCE_DIR_NAME = "_c_src"
-C_SOURCE_DIR = ROOT_DIR / PACKAGE_NAME / C_SOURCE_DIR_NAME
+C_SOURCE_DIR_NAME = "sources"
+C_SOURCE_DIR = ROOT_DIR / C_SOURCE_DIR_NAME
 C_SOURCE_FILES = [str(x) for x in C_SOURCE_DIR.rglob("*.c")]
 
-PYX_SOURCE_DIR_NAME = PACKAGE_NAME  # can be different
+# Constants related to .pyx, i.e. Cython source files
+PYX_SOURCE_DIR_NAME = C_SOURCE_DIR_NAME # can be different
 PYX_SOURCE_DIR = ROOT_DIR / PYX_SOURCE_DIR_NAME
 PYX_SOURCE_FILES = [str(x) for x in PYX_SOURCE_DIR.rglob("*.pyx")]
 C_SOURCE_FILES_GENERATED_FROM_CYTHON = [str(Path(x).with_suffix(".c")) for x in PYX_SOURCE_FILES]
+
+INCLUDE_DIR_NAME = "include"
+INCLUDE_DIR = ROOT_DIR / INCLUDE_DIR_NAME
+INCLUDE_FILES = [str(x) for x in INCLUDE_DIR.rglob("*.h")]
 
 LANGUAGE = "C"
 C_EXTENSION_MODULE_NAME = "_c_extension"
@@ -220,10 +231,7 @@ def extra_compile_args():
 
 def get_extension_modules():
     # Relative to project root directory
-    include_dirs = [
-        str(PACKAGE_DIR),
-        str(C_SOURCE_DIR),
-    ]
+    include_dirs = [str(INCLUDE_DIR)]
     LOGGER.info(f"in function `get_extension_modules`; `include_dirs` = {include_dirs}")
 
     # define each of the extensions yourself or use some functions to collate them

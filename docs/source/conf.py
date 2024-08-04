@@ -14,17 +14,19 @@ from pathlib import Path
 
 import git
 
+
 sys.path.insert(0, str(Path("../..").absolute()))
 
 
-from pythontemplate import __version__
+from simple_python_template import __version__
+
 
 git_repo = git.Repo(".", search_parent_directories=True)  # type: ignore[reportPrivateImportUsage]
 git_commit = git_repo.head.commit
 
 # -- Project information -----------------------------------------------------
 
-project = "pythontemplate"
+project = "simple_python_template"
 copyright = f"{date.today().year}, YOUR_NAME_HERE"  # noqa: A001
 author = "YOUR_NAME_HERE"
 
@@ -129,7 +131,7 @@ def linkcode_resolve(domain, info):
     if file is None:
         return None
     file = Path(file).resolve().relative_to(git_repo.working_dir)
-    if file.parts[0] != "pythontemplate":
+    if file.parts[0] != "simple_python_template":
         # e.g. object is a typing.NewType
         return None
     start, end = lines[1], lines[1] + len(lines[0]) - 1
