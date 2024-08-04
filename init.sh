@@ -55,18 +55,26 @@ function check_installed_python() {
         exit 2
     fi
 
-    for v in 12 11 10 9 8
+    HAVE_PYTHON=0
+
+    for v in 8 9 10 11 12
     do
         PYTHON="python3.${v}"
         which $PYTHON
         if [ $? -eq 0 ]; then
             echo "${PYTHON} installed"
+            HAVE_PYTHON=1
+            break
         fi
-        check_installed_pip
     done
 
-    echo "No usable python found. Please make sure to have python3.8 or newer installed."
-    exit 1
+    if [ $HAVE_PYTHON -eq 1 ]; then
+        check_installed_pip
+        return 0
+    else
+        echo "No usable python found. Please make sure to have python3.8 or newer installed."
+        exit 1
+    fi
 }
 
 function is_function_appended() {
@@ -235,8 +243,11 @@ else
     echo "Skipping making scripts executable."
 fi
 
-# Call the function to check for Pyenv installation
-install_pyenv
+if [ -d $HOME/.pyenv ]; then
+    echo "\`pyenv\` is already installed"
+else
+    install_pyenv
+fi
 
 # Check if pyenv commands are already in ~/.bashrc
 if
@@ -277,6 +288,7 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
     # Prompt the user for the package name and GIT_USERNAME
     read -p "Enter the name for your package: " PACKAGE_NAME
     read -p "Enter your GIT_USERNAME: " GIT_USERNAME
+    read -p "Enter your GIT_REPONAME: " GIT_REPONAME
 
     # Define the directories and files to search
     SEARCH_DIRS=("/assets" "/tests" "README.md" "LICENSE" "simple_python_template")
@@ -289,7 +301,7 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
             sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" \
                        -e "s/simple-python-template/$PACKAGE_NAME/g" \
                        -e "s/GIT_USERNAME/$GIT_USERNAME/g" \
-                       -e "s/GIT_REPONAME/$PACKAGE_NAME/g" "$item"
+                       -e "s/GIT_REPONAME/$GIT_REPONAME/g" "$item"
         else
             echo "$item does not exist, skipping."
         fi
