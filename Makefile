@@ -34,7 +34,7 @@ endef
 CLANG_FORMAT = clang-format -i
 
 # Define specific targets to process
-TARGETS := build test format test-in-docker list
+TARGETS := build test format test-in-docker list tree
 
 $(foreach target,$(TARGETS),$(eval $(call process_target,$(target))))
 
@@ -85,4 +85,28 @@ check:
 		ruff check $(SRC_DIR); \
 	else \
 		echo "Error: $(FIRST_ARGUMENT) is not a directory."; \
+	fi;
+
+# Tree command
+tree:
+	@if [ "$(COMMAND)" = "help" ]; then \
+		exit 0; \
+	fi; \
+	if [ "${FIRST_ARGUMENT}" = "dir" ]; then \
+		if [ "${THIRD_ARGUMENT}" = "" ]; then \
+			find ./${SECOND_ARGUMENT} -type d | sed -e "s/[^-][^\/]*\// │   /g" -e "s/│   \([^  ]\)/└─── \1/"; \
+		else \
+			find ./${SECOND_ARGUMENT} -maxdepth ${THIRD_ARGUMENT} -type d | sed -e "s/[^-][^\/]*\// │   /g" -e "s/│   \([^  ]\)/└─── \1/"; \
+		fi; \
+		exit 0; \
+	elif [ "${FIRST_ARGUMENT}" = "file" ]; then \
+		if [ "${THIRD_ARGUMENT}" = "" ]; then \
+			find ./${SECOND_ARGUMENT} | sed -e "s/[^-][^\/]*\// │   /g" -e "s/│   \([^  ]\)/└─── \1/"; \
+		else \
+			find ./${SECOND_ARGUMENT} -maxdepth ${THIRD_ARGUMENT} | sed -e "s/[^-][^\/]*\// │   /g" -e "s/│   \([^  ]\)/└─── \1/"; \
+		fi; \
+		exit 0; \
+	else \
+		echo "Usage: <dir|file> <directory-name> [level]"; \
+		exit 1; \
 	fi;
