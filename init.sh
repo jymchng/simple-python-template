@@ -299,9 +299,9 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
             echo "Processing $item..."
             # Use sed to replace instances of simple_python_template, simple-python-template, GIT_USERNAME, and GIT_REPONAME
             sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" \
-                       -e "s/simple-python-template/$PACKAGE_NAME/g" \
-                       -e "s/GIT_USERNAME/$GIT_USERNAME/g" \
-                       -e "s/GIT_REPONAME/$GIT_REPONAME/g" "$item"
+                    #    -e "s/simple-python-template/$PACKAGE_NAME/g" \
+                       -e "s/jymchng/$GIT_USERNAME/g" \
+                       -e "s/simple-python-template/$GIT_REPONAME/g" "$item"
         else
             echo "$item does not exist, skipping."
         fi
