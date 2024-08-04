@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assets/simple_python_template-logo.jpeg" width="200">
+  <img src="./assets/simple-python-template-logo.jpeg" width="200">
 </div><p>
 
 <div align="center">
