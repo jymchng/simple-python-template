@@ -287,8 +287,8 @@ read -p "Do you want to rename your package now? (yes/no): " rename_response
 if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
     # Prompt the user for the package name and GIT_USERNAME
     read -p "Enter the name for your package: " PACKAGE_NAME
-    read -p "Enter your GIT_USERNAME: " GIT_USERNAME
-    read -p "Enter your GIT_REPONAME: " GIT_REPONAME
+    read -p "Enter your GitHub Username: " GIT_USERNAME
+    read -p "Enter your GitHub Repository Name: " GIT_REPONAME
 
     # Define the directories and files to search
     SEARCH_DIRS=("/assets" "/tests" "README.md" "LICENSE" "simple_python_template")
@@ -299,13 +299,16 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
             echo "Processing $item..."
             # Use sed to replace instances of simple_python_template, simple-python-template, GIT_USERNAME, and GIT_REPONAME
             sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" \
-                    #    -e "s/simple-python-template/$PACKAGE_NAME/g" \
                        -e "s/jymchng/$GIT_USERNAME/g" \
                        -e "s/simple-python-template/$GIT_REPONAME/g" "$item"
         else
             echo "$item does not exist, skipping."
         fi
     done
+
+    sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" \
+                -e "s/jymchng/$GIT_USERNAME/g" \
+                -e "s/simple-python-template/$GIT_REPONAME/g" "pyproject.toml"
 
     echo "Replacement complete."
 else

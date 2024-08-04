@@ -11,8 +11,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "simple-python-template"
 version = "0.1.0" # Do not change, let poetry-dynamic-versioning handle it.
-homepage = "https://github.com/GIT_USERNAME/simple-python-template"
-repository = "https://github.com/GIT_USERNAME/simple-python-template"
+homepage = "https://github.com/jymchng/simple-python-template"
+repository = "https://github.com/jymchng/simple-python-template"
 license = "Apache-2.0"
 description = ""
 authors = ["AUTHOR_NAME"]
