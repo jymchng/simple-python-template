@@ -35,6 +35,7 @@ generate-setup-file = false
 
 [tool.poetry.scripts]
 simple-python-template = "simple_python_template.cli.main:run_app"
+generate-ref-docs = "scripts.generate_ref_docs:main"
 
 [tool.poetry.dependencies]
 # Be as loose as possible if writing a library.
@@ -44,10 +45,10 @@ rich = ">=10.11.0"
 cyclopts = "^2.9.3"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = "~7.1.2"
-sphinx_rtd_theme = "~2.0.0"
-gitpython = ">=3.1.31"
-sphinx-copybutton = "^0.5.2"
+mkdocs = "^1.6.0"
+mkdocs-material = "^9.5.31"
+mkdocstrings = {extras = ["python"], version = "^0.25.2"}
+toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 coverage = { extras = ["toml"], version = ">=5.1" }
@@ -138,6 +139,7 @@ exclude = [
     "venv",
     ".venv",
     "build.py",
+    "scripts/",
 ]
 
 
