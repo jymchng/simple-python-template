@@ -4,20 +4,23 @@ repo_url: https://github.com/jymchng/simple-python-template
 repo_name: jymchng/simple-python-template
 
 nav:
-    - Home: index.md
-    - List Of Tools: list-of-tools.md
-    - API Reference:
-        - Lib: reference/lib.md
-        - _c_extension: reference/_c_extension.md
-        - main: reference/main.md
-        - custom: reference/custom.md
+  - Home:
+      - index.md
+      - General Tools: general-tools.md
+      - Python Tools: python-tools.md
+      - Documentation: docs.md
+  - API Reference:
+      - Lib: reference/lib.md
+      - _c_extension: reference/_c_extension.md
+      - main: reference/main.md
+      - custom: reference/custom.md
 
 theme:
     name: material
     palette:
         - media: "(prefers-color-scheme)"
-          primary: black
-          accent: light blue
+          primary: blue
+          accent: blue
           toggle:
               icon: material/brightness-auto
               name: Switch to light mode
@@ -25,8 +28,8 @@ theme:
         # Palette toggle for light mode
         - media: "(prefers-color-scheme: light)"
           scheme: default
-          primary: black
-          accent: light blue
+          primary: blue
+          accent: blue
           toggle:
               icon: material/brightness-7
               name: Switch to dark mode
@@ -34,8 +37,8 @@ theme:
         # Palette toggle for dark mode
         - media: "(prefers-color-scheme: dark)"
           scheme: slate
-          primary: black
-          accent: light blue
+          primary: blue
+          accent: blue
           toggle:
               icon: material/brightness-4
               name: Switch to system preference
@@ -56,19 +59,34 @@ theme:
 
     icon:
         repo: fontawesome/brands/github
+
+extra:
+    social:
+        - icon: fontawesome/brands/github
+          link: https://github.com/jymchng/simple-python-template
+          name: simple-python-template repository
+        - icon: material/heart
+          link: https://github.com/sponsors/jymchng/
+          name: support simple-python-template
+
 markdown_extensions:
+    - toc:
+          permalink: true
     - pymdownx.highlight:
           anchor_linenums: true
     - pymdownx.inlinehilite
     - pymdownx.snippets
     - admonition
     - pymdownx.details
-    - pymdownx.superfences
     - pymdownx.tabbed:
           alternate_style: true
+    - pymdownx.superfences
+    - attr_list
+    - md_in_html
 
 plugins:
   - search
+  - tags
   - mkdocstrings:
       handlers:
         python:

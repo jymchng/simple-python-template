@@ -1,6 +1,11 @@
 # List of Tools Used
 
-This list of tools are opinionated, feel free to remove any by not installing it.
+These are a list of general tools that are helpful in the development process.
+
+For example, `pyenv` can be very useful in managing different Python binaries of different versions.
+
+!!! note
+    This list of tools are opinionated, feel free to remove any by not installing it.
 
 | Name          | Description                                                                                     | Website                                      |
 |---------------|-------------------------------------------------------------------------------------------------|----------------------------------------------|
@@ -15,3 +20,4 @@ This list of tools are opinionated, feel free to remove any by not installing it
 | Sed           | A stream editor used for parsing and transforming text, specifically for renaming package instances in files. | [Sed](https://www.gnu.org/software/sed/)   |
 | Bash          | The scripting language used to write the entire script.                                       | [Bash](https://www.gnu.org/software/bash/)  |
 |Pyenv| It is a simple Python version management tool that allows you to easily switch between multiple versions of Python. It helps manage different Python environments for different projects seamlessly. | [Pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#set-up-your-shell-environment-for-pyenv) |
+| Valgrind     | A programming tool for memory debugging, memory leak detection, and profiling.                 | [Valgrind](http://valgrind.org/)            |
