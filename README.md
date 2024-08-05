@@ -62,16 +62,6 @@
 
 </div>
 
-# Table of Contents
-
-- [Features](#Features)
-- [Installation](#installation)
-- [Commands](#commands)
-- [Usage](#usage)
-- [Todos](#todos)
-
----
-
 # Simple Python Template
 
 This template was bootstrapped with [BrianPugn's Python Template](https://github.com/BrianPugh/python-template).
