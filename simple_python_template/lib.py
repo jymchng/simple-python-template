@@ -1,4 +1,15 @@
+import logging
+import sys
+from logging import getLogger
 from typing import TYPE_CHECKING
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)-8s [%(filename)s:%(lineno)s] %(message)s",
+    stream=sys.stdout,
+)
+LOGGER = getLogger("simple_python_template::lib")
 
 
 NEWTYPE_INIT_ARGS_STR = "_newtype_init_args_"
@@ -124,21 +135,17 @@ class NewInit:
         new_type_constructor_kwargs_str = NEWTYPE_INIT_KWARGS_STR
 
         func = self.func_get(self.obj, self.cls) if self.has_get else self.func_get
-        # print("func: ", func)
+        LOGGER.debug("func: ", func)
         has_args = constructor_args != ()
         has_kwargs = constructor_kwargs != {}
-        # print("constructor_args: ", constructor_args)
-        # print("constructor_kwargs: ", constructor_kwargs)
+        LOGGER.debug("constructor_args: ", constructor_args)
+        LOGGER.debug("constructor_kwargs: ", constructor_kwargs)
         setattr(self.obj, new_type_constructor_args_str, constructor_args[1:]) if not hasattr(
             self.obj, new_type_constructor_args_str
         ) else None
         setattr(self.obj, new_type_constructor_kwargs_str, constructor_kwargs) if not hasattr(
             self.obj, new_type_constructor_kwargs_str
         ) else None
-        # constructor_args = (getattr(self.obj, new_type_constructor_args_str, UNDEFINED) is not
-        # UNDEFINED) or constructor_args
-        # constructor_kwargs = (getattr(self.obj, new_type_constructor_kwargs_str, UNDEFINED) is not
-        # UNDEFINED) or constructor_kwargs
         if not has_args and not has_kwargs:
             func()
         if not has_args and has_kwargs:
@@ -148,8 +155,8 @@ class NewInit:
         if has_args and has_kwargs:
             func(*constructor_args, **constructor_kwargs)
 
-        # print("self.obj; type(self.obj): ", self.obj, type(self.obj))
-        # print("self.obj._newtype_init_kwargs_: ", self.obj._newtype_init_kwargs_)
+        LOGGER.debug("self.obj; type(self.obj): ", self.obj, type(self.obj))
+        LOGGER.debug("self.obj._newtype_init_kwargs_: ", self.obj._newtype_init_kwargs_)
 
 
 def NewType(  # noqa: C901,N802
@@ -179,7 +186,7 @@ def NewType(  # noqa: C901,N802
 
     class BaseNewType(BaseBaseNewType):
         def __new__(cls, value, *_args, **_kwargs):
-            # print("__new__: ", type_, cls, value, _args, _kwargs)
+            LOGGER.debug("__new__: ", type_, cls, value, _args, _kwargs)
             if type_.__new__ == object.__new__:
                 inst = type_.__new__(cls)
                 value_dict: dict = getattr(value, "__dict__", UNDEFINED)
