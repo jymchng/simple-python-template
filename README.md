@@ -6,6 +6,11 @@
 
 # Simple Python Template
 
+## Documentation
+<a href="https://spyt.asyncmove.com">
+  <img src="https://img.shields.io/badge/docs-passing-brightgreen.svg" width="100" alt="docs passing">
+</a>
+
 ### Compatibility and Version
 <img src="https://img.shields.io/badge/%3E=python-3.8-blue.svg" alt="Python compat">
 <a href="https://pypi.python.org/pypi/simple-python-template"><img src="https://img.shields.io/pypi/v/simple-python-template.svg" alt="PyPi"></a>
@@ -13,9 +18,6 @@
 ### CI/CD
 <a href="https://github.com/jymchng/simple-python-template/actions?query=workflow%3Atests"><img src="https://github.com/jymchng/simple-python-template/actions/workflows/tests.yaml/badge.svg?branch=main" alt="GHA Status"></a>
 <a href="https://codecov.io/github/jymchng/simple-python-template?branch=main"><img src="https://codecov.io/github/jymchng/simple-python-template/coverage.svg?branch=main" alt="Coverage"></a>
-
-### Documentation
-<a href="https://simple-python-template.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/simple-python-template/badge/?version=latest" alt="Documentation Status"></a>
 
 ### License and Issues
 <a href="https://github.com/jymchng/simple-python-template/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jymchng/simple-python-template" alt="License"></a>

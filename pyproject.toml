@@ -14,8 +14,9 @@ version = "0.1.0" # Do not change, let poetry-dynamic-versioning handle it.
 homepage = "https://github.com/jymchng/simple-python-template"
 repository = "https://github.com/jymchng/simple-python-template"
 license = "Apache-2.0"
+documentation = "https://spyt.asyncmove.com"
 description = ""
-authors = ["AUTHOR_NAME"]
+authors = ["Jim Chng <jimchng@outlook.com>"]
 readme = "README.md"
 # tuple index out of range error occurs if include = "."
 packages = [{ include = "simple_python_template" }]
