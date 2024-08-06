@@ -156,7 +156,6 @@ def extra_compile_args():
         extra_compile_args = [
             "/O3",
             "/Wall",  # Enable all warnings
-            "/Werror",  # Treat warnings as errors
             "/Wno-unreachable-code-fallthrough",  # Ignore fallthrough warnings
             "/Wno-deprecated-declarations",  # Ignore deprecated declarations
             "/Wno-parentheses-equality",  # Ignore parentheses equality warnings
