@@ -92,6 +92,10 @@ line_profiler = ">=3.5.1"
 # url = "https://test.pypi.org/simple/"
 # priority = "secondary"
 
+
+[tool.poetry.group.tests.dependencies]
+pytest-memray = "^1.7.0"
+
 [tool.coverage.run]
 branch = true
 omit = ["tests/*"]
