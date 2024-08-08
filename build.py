@@ -267,7 +267,6 @@ def extra_compile_args():
             "-Wformat=2",
             "-Wundef",
             # "-Wshadow", # Cython error
-            "-Wcast-align",
             "-Wunused",
             "-Wnull-dereference",
             # "-Wdouble-promotion", # Cython error
@@ -276,12 +275,13 @@ def extra_compile_args():
             "-Wwrite-strings",
         ]
 
-        if platform.system() != "Darwin":
+        if platform.system() != "Darwin": # not macos
             extra_compile_args.extend(
                 [
                     "-Wno-warning=discarded-qualifiers",  # custom.c:44:39/30/47
                     "-Wno-error=discarded-qualifiers",  # custom.c:44:39/30/47
                     "-Wno-discarded-qualifiers",
+                    "-Wcast-align",
                 ]
             )
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
@@ -333,11 +333,15 @@ def get_extension_modules():
 
 
 def copy_output_to_cmd_buildlib(cmd):
-    for output in cmd.get_outputs():
+    build_outputs = cmd.get_outputs()
+    build_outputs_str = {str(output) for output in build_outputs}
+    LOGGER.info(f"Outputs produced by `build` are: {build_outputs_str}")
+    for output in build_outputs:
         output = Path(output)
         relative_extension = output.relative_to(cmd.build_lib)
-        LOGGER.info(f"Copying file from `{output}` to `{relative_extension}`")
-        shutil.copyfile(output, relative_extension)
+        relative_extension_path = PROJECT_ROOT_DIR / relative_extension
+        LOGGER.info(f"Copying file from `{output}` to `{relative_extension_path}`")
+        shutil.copyfile(output, relative_extension_path)
         LOGGER.info("File copied successfully")
 
 
