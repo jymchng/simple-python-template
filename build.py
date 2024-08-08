@@ -196,9 +196,9 @@ def extra_compile_args():
             "-O3",
             "-Wall",
             "-Werror",
-            # "-Wno-unreachable-code-fallthrough",
-            # "-Wno-deprecated-declarations",
-            # "-Wno-parentheses-equality",
+            "-Wno-unreachable-code-fallthrough",
+            "-Wno-deprecated-declarations",
+            "-Wno-parentheses-equality",
             "-Wno-unreachable-code",  # TODO: This should no longer be necessary with Cython>=3.0.3
             "-U_FORTIFY_SOURCE",
             "-D_FORTIFY_SOURCE=3",
