@@ -291,7 +291,7 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
     read -p "Enter your GitHub Repository Name: " GIT_REPONAME
 
     # Define the directories and files to search
-    SEARCH_DIRS=("/assets" "/tests" "README.md" "LICENSE" "simple_python_template")
+    SEARCH_DIRS=("/assets" "/tests" "README.md" "LICENSE" "simple_python_template", ".gitignore", "Dockerfile_testing", "pyproject.toml")
 
     # Loop through each directory and file
     for item in "${SEARCH_DIRS[@]}"; do
@@ -305,10 +305,6 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
             echo "$item does not exist, skipping."
         fi
     done
-
-    sed -i.bak -e "s/simple_python_template/$PACKAGE_NAME/g" \
-                -e "s/jymchng/$GIT_USERNAME/g" \
-                -e "s/simple-python-template/$GIT_REPONAME/g" "pyproject.toml"
 
     echo "Replacement complete."
 else

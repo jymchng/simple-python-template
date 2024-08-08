@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import shutil
 import sys
+import platform
 
 from setuptools import Extension  # noqa: I001
 from setuptools.command.build_ext import build_ext  # noqa: I001
@@ -35,23 +36,17 @@ except ImportError:
 PROJECT_ROOT_DIR = Path(__file__).resolve().parent
 
 
-def where_am_i() -> "Path":
-    """Checks if the script is being run in the correct directory (`PROJECT_ROOT_DIR`)."""
-    current_dir = Path.cwd()
-    if current_dir != PROJECT_ROOT_DIR:
-        raise RuntimeError(f"Please run this script in the directory: {PROJECT_ROOT_DIR}")
-
-    # Check for at least one required file in `PROJECT_ROOT_DIR`
-    required_files = ["pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "requirements-dev.txt"]
-    if not any((PROJECT_ROOT_DIR / file).exists() for file in required_files):
-        raise RuntimeError("`build.py` should be located at the root directory of the project")
-
-    LOGGER.info(f"Running in the correct directory: {current_dir}")
-    return PROJECT_ROOT_DIR
-
-
-# pre-build checks; making sure `build.py` is in `PROJECT_ROOT_DIR`
-where_am_i()
+def list_dir_contents(directory, depth, level=0):
+    if level > depth:
+        return
+    try:
+        with os.scandir(directory) as entries:
+            for entry in entries:
+                print("  " * level + f"- {entry.name}")
+                if entry.is_dir(follow_symlinks=False):
+                    list_dir_contents(entry.path, depth, level + 1)
+    except PermissionError as e:
+        print(f"PermissionError: {e}")
 
 
 def get_package_name(
@@ -96,12 +91,12 @@ PACKAGE_NAME = get_package_name()
 ALLOWED_TO_FAIL = False
 REMOVE_HTML_ANNOTATION_FILES = True
 PACKAGE_DIR = PROJECT_ROOT_DIR / PACKAGE_NAME
-C_SOURCE_DIR_NAME = "sources"
-C_SOURCE_DIR = PROJECT_ROOT_DIR / C_SOURCE_DIR_NAME
-C_SOURCE_FILES = [str(x) for x in C_SOURCE_DIR.rglob("*.c")]
+PROJECT_C_SOURCE_DIR_NAME = "sources"
+PROJECT_C_SOURCE_DIR = PROJECT_ROOT_DIR / PROJECT_C_SOURCE_DIR_NAME
+C_SOURCE_FILES = [str(x) for x in PROJECT_C_SOURCE_DIR.rglob("*.c")]
 
 # Constants related to .pyx, i.e. Cython source files
-PYX_SOURCE_DIR_NAME = C_SOURCE_DIR_NAME # can be different
+PYX_SOURCE_DIR_NAME = PROJECT_C_SOURCE_DIR_NAME  # can be different
 PYX_SOURCE_DIR = PROJECT_ROOT_DIR / PYX_SOURCE_DIR_NAME
 PYX_SOURCE_FILES = [str(x) for x in PYX_SOURCE_DIR.rglob("*.pyx")]
 C_SOURCE_FILES_GENERATED_FROM_CYTHON = [str(Path(x).with_suffix(".c")) for x in PYX_SOURCE_FILES]
@@ -118,6 +113,64 @@ LOGGER.info(f"`PACKAGE_NAME` = {PACKAGE_NAME}")
 LOGGER.info(f"`ALLOWED_TO_FAIL` = {ALLOWED_TO_FAIL}")
 LOGGER.info(f"`C_SOURCE_FILES` = {C_SOURCE_FILES}")
 LOGGER.info(f"`PYX_SOURCE_FILES` = {PYX_SOURCE_FILES}")
+
+
+def where_am_i() -> "Path":
+    """Checks if the script is being run in the correct directory (`PROJECT_ROOT_DIR`)."""
+    current_dir = Path.cwd()
+    if current_dir != PROJECT_ROOT_DIR:
+        raise RuntimeError(f"Please run this script in the directory: {PROJECT_ROOT_DIR}")
+
+    # Check for at least one required file in `PROJECT_ROOT_DIR`
+    required_files = [
+        "pyproject.toml",
+        "setup.py",
+        "setup.cfg",
+        "requirements.txt",
+        "requirements-dev.txt",
+    ]
+    if not any((PROJECT_ROOT_DIR / file).exists() for file in required_files):
+        raise RuntimeError("`build.py` should be located at the root directory of the project")
+
+    LOGGER.info(f"Running in the correct directory: {current_dir}")
+    return PROJECT_ROOT_DIR
+
+
+def check_dir_files_existence():
+    def get_corresponding_c_files(pyx_files, source_dirs):
+        return {
+            Path(pyx_file).with_suffix(".c")
+            for pyx_file in pyx_files
+            for source_dir in source_dirs
+            if (source_dir / Path(pyx_file).with_suffix(".c").name).exists()
+        }
+
+    if not PROJECT_C_SOURCE_DIR.exists():
+        raise RuntimeError(
+            f"`PROJECT_C_SOURCE_DIR` = {PROJECT_C_SOURCE_DIR} does not exist!\nScanning files in `PROJECT_ROOT_DIR`: {list_dir_contents(PROJECT_ROOT_DIR, 0)}"
+        )
+
+    if not C_SOURCE_FILES:
+        raise RuntimeError(f"""`C_SOURCE_FILES` is empty!
+                            Scanning `PROJECT_ROOT_DIR` for files up to 0 level:
+                            {list_dir_contents(str(PROJECT_ROOT_DIR), 0)};
+                            Scanning `PROJECT_C_SOURCE_DIR` for files up to 0 level:
+                            {list_dir_contents(str(PROJECT_C_SOURCE_DIR), 0)}
+                            """)
+
+    def check_missing_c_files(pyx_files, source_dirs):
+        c_files = get_corresponding_c_files(pyx_files, source_dirs)
+        missing_c_files = {
+            Path(pyx_file).with_suffix(".c")
+            for pyx_file in pyx_files
+            if Path(pyx_file).with_suffix(".c") not in c_files
+        }
+
+        if missing_c_files:
+            raise RuntimeError(f"Missing .c files for .pyx files: {missing_c_files}")
+
+        if not USE_CYTHON:
+            check_missing_c_files()
 
 
 def remove_cython_metadata(file_path):
@@ -195,15 +248,15 @@ def extra_compile_args():
             "-O3",
             "-Wall",
             "-Werror",
-            # "-Wno-unreachable-code-fallthrough",
-            # "-Wno-deprecated-declarations",
-            # "-Wno-parentheses-equality",
+            "-Wno-unreachable-code-fallthrough",
+            "-Wno-deprecated-declarations",
+            "-Wno-parentheses-equality",
             "-Wno-unreachable-code",  # TODO: This should no longer be necessary with Cython>=3.0.3
             "-U_FORTIFY_SOURCE",
             "-D_FORTIFY_SOURCE=3",
             "-fstack-protector-strong",
             "-fcf-protection=full",
-            "-fstack-clash-protection",
+            # "-fstack-clash-protection",
             "-Wall",
             "-Werror",
             "-Wextra",
@@ -214,17 +267,23 @@ def extra_compile_args():
             "-Wformat=2",
             "-Wundef",
             # "-Wshadow", # Cython error
-            "-Wcast-align",
             "-Wunused",
             "-Wnull-dereference",
             # "-Wdouble-promotion", # Cython error
             "-Wimplicit-fallthrough",
             "-Werror=strict-prototypes",
             "-Wwrite-strings",
-            # "-Wno-warning=discarded-qualifiers", # custom.c:44:39/30/47
-            "-Wno-error=discarded-qualifiers", # custom.c:44:39/30/47
-            "-Wno-discarded-qualifiers",
         ]
+
+        if platform.system() != "Darwin": # not macos
+            extra_compile_args.extend(
+                [
+                    "-Wno-warning=discarded-qualifiers",  # custom.c:44:39/30/47
+                    "-Wno-error=discarded-qualifiers",  # custom.c:44:39/30/47
+                    "-Wno-discarded-qualifiers",
+                    "-Wcast-align",
+                ]
+            )
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
     return extra_compile_args
 
@@ -236,18 +295,18 @@ def get_extension_modules():
 
     # define each of the extensions yourself or use some functions to collate them
     custom_ext = Extension(
-        f"{PACKAGE_NAME}.custom", # anything within it can be import with `from simple_python_template.custom import (Custom, )` within Python
+        f"{PACKAGE_NAME}.custom",  # anything within it can be import with `from simple_python_template.custom import (Custom, )` within Python
         [
-            str(C_SOURCE_DIR / "custom.c") # this is where the source C files is
+            str(PROJECT_C_SOURCE_DIR / "custom.c")  # this is where the source C files is
         ],
         include_dirs=include_dirs,
         extra_compile_args=extra_compile_args(),
         language=LANGUAGE,
     )
     _c_extension_ext = Extension(
-        f"{PACKAGE_NAME}.{C_EXTENSION_MODULE_NAME}", # anything within it can be import with `from simple_python_template._c_extension import (Foo, )`
+        f"{PACKAGE_NAME}.{C_EXTENSION_MODULE_NAME}",  # anything within it can be import with `from simple_python_template._c_extension import (Foo, )`
         [
-            str(C_SOURCE_DIR / "foo.c"),
+            str(PROJECT_C_SOURCE_DIR / "foo.c"),
             *PYX_SOURCE_FILES,
         ],
         include_dirs=include_dirs,
@@ -274,11 +333,15 @@ def get_extension_modules():
 
 
 def copy_output_to_cmd_buildlib(cmd):
-    for output in cmd.get_outputs():
+    build_outputs = cmd.get_outputs()
+    build_outputs_str = {str(output) for output in build_outputs}
+    LOGGER.info(f"Outputs produced by `build` are: {build_outputs_str}")
+    for output in build_outputs:
         output = Path(output)
         relative_extension = output.relative_to(cmd.build_lib)
-        LOGGER.info(f"Copying file from `{output}` to `{relative_extension}`")
-        shutil.copyfile(output, relative_extension)
+        relative_extension_path = PROJECT_ROOT_DIR / relative_extension
+        LOGGER.info(f"Copying file from `{output}` to `{relative_extension_path}`")
+        shutil.copyfile(output, relative_extension_path)
         LOGGER.info("File copied successfully")
 
 
@@ -333,6 +396,9 @@ def build_c_extensions():
 
 if __name__ == "__main__":
     # actual build
+    # pre-build checks; making sure `build.py` is in `PROJECT_ROOT_DIR`
+    where_am_i()
+    check_dir_files_existence()
     try:
         if USE_CYTHON:
             build_cython_extensions()

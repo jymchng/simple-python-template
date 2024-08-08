@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
 
 jobs:
@@ -81,11 +82,16 @@ jobs:
         with:
           files: "tests"
 
+      - name: Make sure the binaries exist
+        id: check_binaries_exist
+        run: |
+          ls simple_python_template
+
       - name: Run tests
         if: steps.check_test_files.outputs.files_exists == 'true'
         run: |
           source ${{ env.ACTIVATE_PYTHON_VENV }}
-          python -m pytest --cov=pythontemplate --cov-report term --cov-report xml --junitxml=testresults.xml
+          python -m pytest --cov=simple_python_template --cov-report term --cov-report xml --junitxml=testresults.xml
           coverage report
 
       - name: Upload coverage to Codecov

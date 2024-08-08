@@ -242,8 +242,7 @@ Temporary Items
 .apdisk
 
 # Cython
-pythontemplate/_c_extension.c
-pythontemplate/*.html
+simple_python_template/*.html
 
 # Poetry
 poetry.toml

@@ -42,7 +42,7 @@ list:
 	echo "Here are the list of targets: [$(TARGETS)]";
 
 test-in-docker:
-	docker build -f Dockerfile_testing -t $(TESTING_IN_DOCKER_IMAGE_NAME) .
+	docker build --progress plain -f Dockerfile_testing -t $(TESTING_IN_DOCKER_IMAGE_NAME) .
 	docker run --rm -it --name $(TESTING_IN_DOCKER_IMAGE_NAME) $(TESTING_IN_DOCKER_IMAGE_NAME)
 
 test:
