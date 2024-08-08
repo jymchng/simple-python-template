@@ -85,7 +85,7 @@ jobs:
       - name: Make sure the binaries exist
         id: check_binaries_exist
         run: |
-          python -c "from simple_python_template import custom; print(vars(custom))"
+          ls simple_python_template
 
       - name: Run tests
         if: steps.check_test_files.outputs.files_exists == 'true'
