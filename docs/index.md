@@ -1,8 +1,12 @@
 <div align="center">
-  <img src="./assets/simple-python-template-logo.jpeg" width="200">
+  <img src="./assets/simple-python-template-logo.png" width="200">
 </div>
 
 <div align="center"><h1>Simple Python Template</h1></div>
+
+## Download
+
+Go to [`Download and Installation`](./how-to-use/download.md) to find out how to download and use this template repository.
 
 ## Why write this?
 

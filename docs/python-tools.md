@@ -5,7 +5,7 @@ A list of tools that are commonly used in the Python ecosystem.
 For example, Ruff is a famous static linter and formatter written in Rust.
 
 !!! note
-    This list of tools are opinionated, feel free to remove any by removing its occurrences in the [`pyproject.toml`](../../pyproject.toml) file.
+    This list of tools are opinionated, feel free to remove any by removing its occurrences in the pyproject.toml` file.
 
 | Name        | Description                                                                                     | Website                                      |
 |-------------|-------------------------------------------------------------------------------------------------|----------------------------------------------|

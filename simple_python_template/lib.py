@@ -17,7 +17,7 @@ NEWTYPE_INIT_KWARGS_STR = "_newtype_init_kwargs_"
 UNDEFINED = object()
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Dict, Type, TypeVar
+    from typing import Any, Callable, Dict, Tuple, Type, TypeVar
 
     T = TypeVar("T")
 
@@ -38,7 +38,7 @@ class NewTypeMethod:
             self.has_get = False
         self.wrapped_cls = wrapped_cls
 
-    def __get__(self, inst, owner):
+    def __get__(self, inst: "Any", owner: "Type[Any]"):
         """Retrieves the instance and owner for the descriptor.
 
         Args:
@@ -53,7 +53,7 @@ class NewTypeMethod:
         self.cls = owner
         return self
 
-    def __call__(self, *args, **kwargs):  # noqa: C901
+    def __call__(self, *args: "Tuple[Any, ...]", **kwargs: "Dict[str, Any]"):  # noqa: C901
         """Calls the wrapped function, handles the initialization of the wrapped class if necessary.
 
         Args:
@@ -94,7 +94,7 @@ class NewTypeMethod:
 
 
 class NewInit:
-    def __init__(self, constructor):
+    def __init__(self, constructor: "Any"):
         """
 
         Initializes the NewInit with a constructor.
@@ -109,7 +109,7 @@ class NewInit:
             self.func_get = constructor
             self.has_get = False
 
-    def __get__(self, obj, owner):
+    def __get__(self, obj: "Any", owner: "Type[Any]"):
         """Retrieves the object and owner for the descriptor.
 
         Args:
@@ -124,7 +124,9 @@ class NewInit:
         self.cls = owner
         return self
 
-    def __call__(self, *constructor_args, **constructor_kwargs):
+    def __call__(
+        self, *constructor_args: "Tuple[Any, ...]", **constructor_kwargs: "Dict[str, Any]"
+    ):
         """Calls the wrapped constructor with the provided arguments.
 
         Args:
@@ -182,7 +184,7 @@ def NewType(  # noqa: C901,N802
                     setattr(cls, k, NewTypeMethod(v, type_))
                 elif k not in object.__dict__:
                     setattr(cls, k, v)
-            cls.__init__ = NewInit(cls.__init__)  # type: ignore[method-assign]
+            cls.__init__ = NewInit(cls.__init__)  # type: ignore[method-assign, assignment]
 
     class BaseNewType(BaseBaseNewType):
         def __new__(cls, value, *_args, **_kwargs):

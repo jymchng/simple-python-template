@@ -33,7 +33,7 @@ Example command:
 ```bash
 poetry run scripts.generate_ref_docs:main --package-name my_package --output-dir docs/reference --force
 ```
-This command generates the API documentation for my_package, saves it to the docs/reference directory, and overwrites existing files if they are present.
+This command generates the API documentation for `my_package`, saves it to the `docs/reference` directory, and overwrites existing files if they are present.
 
 ## Using MkDocs
 MkDocs is a static site generator that is used to build project documentation.

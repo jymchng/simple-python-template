@@ -54,6 +54,13 @@ test:
 		echo "Error: $(FIRST_ARGUMENT) is not a directory."; \
 	fi;
 
+test-leak:
+	@if [ -d $(TEST_DIR)/$(FIRST_ARGUMENT) ]; then \
+		python -m pytest --enable-leak-tracking $(TEST_DIR) --cov -s -vv; \
+	else \
+		echo "Error: $(FIRST_ARGUMENT) is not a directory."; \
+	fi
+
 format-test:
 	@if [ -d $(TEST_DIR)/$(FIRST_ARGUMENT) ]; then \
 		ruff format $(TEST_DIR)/$(FIRST_ARGUMENT); \

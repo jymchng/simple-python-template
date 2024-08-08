@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./docs/assets/simple-python-template-logo.jpeg" width="200">
+  <img src="./docs/assets/simple-python-template-logo.png" width="200">
 </div><p>
 
 <div align="center">
@@ -99,15 +99,6 @@ Code Quality: Integrated with Code Climate, Codacy, and Snyk for code quality an
 Coverage Tracking: Coverage tracking with Codecov.
 
 # How To Use
-
-## Definitions
-
-|Term|Definitions|Name in this Repository|
-|:---:|:---:|:---:|
-|`ROOT_DIR`|The directory where the file [`pyproject.toml`](./pyproject.toml) resides|`simple_python_template`|
-|`SOURCE_DIR`|The directory where the source files (i.e. files that contain your code) are located.|`simple_python_template`|
-|`BUILD_DIR`|The directory where built distributions (e.g., source distributions and wheels) are stored after running the build command. This is typically the `dist` directory created by tools like Poetry.|`build`|
-|`TESTS_DIR`|The directory where your test files are located. This is where you will place your test cases to ensure your code functions as expected. Typically, this directory contains files that start with `test_` or end with `_test.py`.|`tests`|
 
 ## How to Start
 

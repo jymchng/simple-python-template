@@ -31,26 +31,26 @@ try:
 except ImportError:
     LOGGER.info("Unable to import `Cython`, falling back to building only `C` extensions")
 
-# Set ROOT_DIR to the directory of the current file, if in doubt with regards to path, always use relative to `ROOT_DIR`
-ROOT_DIR = Path(__file__).resolve().parent
+# Set `PROJECT_ROOT_DIR` to the directory of the current file, if in doubt with regards to path, always use relative to `PROJECT_ROOT_DIR`
+PROJECT_ROOT_DIR = Path(__file__).resolve().parent
 
 
 def where_am_i() -> "Path":
-    """Checks if the script is being run in the correct directory (`ROOT_DIR`)."""
+    """Checks if the script is being run in the correct directory (`PROJECT_ROOT_DIR`)."""
     current_dir = Path.cwd()
-    if current_dir != ROOT_DIR:
-        raise RuntimeError(f"Please run this script in the directory: {ROOT_DIR}")
+    if current_dir != PROJECT_ROOT_DIR:
+        raise RuntimeError(f"Please run this script in the directory: {PROJECT_ROOT_DIR}")
 
-    # Check for at least one required file in ROOT_DIR
+    # Check for at least one required file in `PROJECT_ROOT_DIR`
     required_files = ["pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "requirements-dev.txt"]
-    if not any((ROOT_DIR / file).exists() for file in required_files):
+    if not any((PROJECT_ROOT_DIR / file).exists() for file in required_files):
         raise RuntimeError("`build.py` should be located at the root directory of the project")
 
     LOGGER.info(f"Running in the correct directory: {current_dir}")
-    return ROOT_DIR
+    return PROJECT_ROOT_DIR
 
 
-# pre-build checks; making sure `build.py` is in `ROOT_DIR`
+# pre-build checks; making sure `build.py` is in `PROJECT_ROOT_DIR`
 where_am_i()
 
 
@@ -95,19 +95,19 @@ PACKAGE_NAME = get_package_name()
 # ALLOWED_TO_FAIL = os.environ.get("CIBUILDWHEEL", "0") != "1"
 ALLOWED_TO_FAIL = False
 REMOVE_HTML_ANNOTATION_FILES = True
-PACKAGE_DIR = ROOT_DIR / PACKAGE_NAME
+PACKAGE_DIR = PROJECT_ROOT_DIR / PACKAGE_NAME
 C_SOURCE_DIR_NAME = "sources"
-C_SOURCE_DIR = ROOT_DIR / C_SOURCE_DIR_NAME
+C_SOURCE_DIR = PROJECT_ROOT_DIR / C_SOURCE_DIR_NAME
 C_SOURCE_FILES = [str(x) for x in C_SOURCE_DIR.rglob("*.c")]
 
 # Constants related to .pyx, i.e. Cython source files
 PYX_SOURCE_DIR_NAME = C_SOURCE_DIR_NAME # can be different
-PYX_SOURCE_DIR = ROOT_DIR / PYX_SOURCE_DIR_NAME
+PYX_SOURCE_DIR = PROJECT_ROOT_DIR / PYX_SOURCE_DIR_NAME
 PYX_SOURCE_FILES = [str(x) for x in PYX_SOURCE_DIR.rglob("*.pyx")]
 C_SOURCE_FILES_GENERATED_FROM_CYTHON = [str(Path(x).with_suffix(".c")) for x in PYX_SOURCE_FILES]
 
 INCLUDE_DIR_NAME = "include"
-INCLUDE_DIR = ROOT_DIR / INCLUDE_DIR_NAME
+INCLUDE_DIR = PROJECT_ROOT_DIR / INCLUDE_DIR_NAME
 INCLUDE_FILES = [str(x) for x in INCLUDE_DIR.rglob("*.h")]
 
 LANGUAGE = "C"
@@ -223,6 +223,7 @@ def extra_compile_args():
             "-Wwrite-strings",
             # "-Wno-warning=discarded-qualifiers", # custom.c:44:39/30/47
             "-Wno-error=discarded-qualifiers", # custom.c:44:39/30/47
+            "-Wno-discarded-qualifiers",
         ]
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
     return extra_compile_args
