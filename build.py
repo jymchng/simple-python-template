@@ -226,11 +226,11 @@ def extra_compile_args():
         ]
 
         if platform.system() != 'Darwin':
-            extra_compile_args.extend(
+            extra_compile_args.extend([
                 "-Wno-warning=discarded-qualifiers", # custom.c:44:39/30/47
                 "-Wno-error=discarded-qualifiers", # custom.c:44:39/30/47
                 "-Wno-discarded-qualifiers",
-            )
+            ])
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
     return extra_compile_args
 
