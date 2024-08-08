@@ -58,7 +58,7 @@
 <a href="https://codebeat.co/projects/github-com-jymchng-simple-python-template-main"><img src="https://codebeat.co/badges/simple-python-template" alt="Codebeat"></a>
 <a href="https://waffle.io/jymchng/simple-python-template"><img src="https://badge.waffle.io/jymchng/simple-python-template.svg?columns=all" alt="Waffle.io - Columns and their card count"></a>
 <a href="https://snyk.io/test/github/jymchng/simple-python-template"><img src="https://img.shields.io/snyk/vulnerabilities/github/jymchng/simple-python-template.svg" alt="Snyk Vulnerabilities"></a>
-<a href="https://app.codacy.com/project/jymchng/simple-python-template/dashboard"><img src="https://img.shields.io/codacy/coverage/simple-python-template.svg" alt="Codacy coverage"></a>
+<a href="https://app.codacy.com/gh/jymchng/simple-python-template/dashboard"><img src="https://app.codacy.com/project/badge/Grade/ee914306630842f0a12be7e0520683bf"/></a>
 <a href="https://bettercodehub.com/"><img src="https://bettercodehub.com/edge/badge/jymchng/simple-python-template?branch=main" alt="BCH compliance"></a>
 <a href="https://scrutinizer-ci.com/g/jymchng/simple-python-template/?branch=main"><img src="https://scrutinizer-ci.com/g/jymchng/simple-python-template/badges/quality-score.png?b=main" alt="Scrutinizer"></a>
 
@@ -80,7 +80,6 @@ With a comprehensive `build.py` script included, this template simplifies the bu
 
 - [Features](#features)
 - [How to Use](#how-to-use)
-   - [Definitions](#definitions)
    - [How to Start](#how-to-start)
 - [Convenient Scripts](#convenient-scripts)
 - [Testing with Docker](#testing-with-docker)
