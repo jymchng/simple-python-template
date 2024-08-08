@@ -203,7 +203,7 @@ def extra_compile_args():
             "-D_FORTIFY_SOURCE=3",
             "-fstack-protector-strong",
             "-fcf-protection=full",
-            "-fstack-clash-protection",
+            # "-fstack-clash-protection",
             "-Wall",
             "-Werror",
             "-Wextra",
