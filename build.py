@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import shutil
 import sys
+import platform
 
 from setuptools import Extension  # noqa: I001
 from setuptools.command.build_ext import build_ext  # noqa: I001
@@ -221,10 +222,15 @@ def extra_compile_args():
             "-Wimplicit-fallthrough",
             "-Werror=strict-prototypes",
             "-Wwrite-strings",
-            # "-Wno-warning=discarded-qualifiers", # custom.c:44:39/30/47
-            "-Wno-error=discarded-qualifiers", # custom.c:44:39/30/47
-            "-Wno-discarded-qualifiers",
+
         ]
+
+        if platform.system() != 'Darwin':
+            extra_compile_args.extend(
+                "-Wno-warning=discarded-qualifiers", # custom.c:44:39/30/47
+                "-Wno-error=discarded-qualifiers", # custom.c:44:39/30/47
+                "-Wno-discarded-qualifiers",
+            )
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
     return extra_compile_args
 
