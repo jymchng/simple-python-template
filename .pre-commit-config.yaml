@@ -115,13 +115,6 @@ repos:
       additional_dependencies:
         - tomli
 
-  - repo: local
-    hooks:
-      - id: clean-build-dist
-        name: Clean build and dist folders
-        entry: bash -c 'rm -rf dist build && rm -f simple_python_template/*.so && rm -f simple_python_template/*.pyd'
-        language: system
-
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.1
     hooks:
