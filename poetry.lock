@@ -509,13 +509,13 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "cyclopts"
-version = "2.9.4"
+version = "2.9.7"
 description = ""
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "cyclopts-2.9.4-py3-none-any.whl", hash = "sha256:967bed7d406b19052475efd67f56596ef1cb9aa22303b0fa4b03a16897793824"},
-    {file = "cyclopts-2.9.4.tar.gz", hash = "sha256:d29d7f85612131a8bbd9b586d6226c873edd7b6fde865f73e402f556f96e8086"},
+    {file = "cyclopts-2.9.7-py3-none-any.whl", hash = "sha256:315cd453c32f166421ba38da341dc7a52a56009643f361552bcc39e68aa487b0"},
+    {file = "cyclopts-2.9.7.tar.gz", hash = "sha256:b0ef1bde722c4f5dc8c83653c872f82775a6019e2ecedad77306f823f0b76f7c"},
 ]
 
 [package.dependencies]
@@ -1859,8 +1859,8 @@ files = [
 [package.dependencies]
 numpy = [
     {version = ">=1.20.3", markers = "python_version < \"3.10\""},
-    {version = ">=1.21.0", markers = "python_version >= \"3.10\" and python_version < \"3.11\""},
     {version = ">=1.23.2", markers = "python_version >= \"3.11\""},
+    {version = ">=1.21.0", markers = "python_version >= \"3.10\" and python_version < \"3.11\""},
 ]
 python-dateutil = ">=2.8.2"
 pytz = ">=2020.1"
@@ -3257,4 +3257,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.13"
-content-hash = "d0c1bc1eba37cea0582402e717985b417833cd7d9100c6ffdf582b2d329108a8"
+content-hash = "ab44f2aae5d4004d1770995c7a2e159c1256ea6f383ea147459f68d9f37d9e23"
