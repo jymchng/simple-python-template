@@ -12,6 +12,8 @@ nav:
   - How To Use:
       - Download and Installation of Tools: how-to-use/download.md
       - Definitions: how-to-use/definitions.md
+      - Minimally Supported Python Version: how-to-use/MSPV.md
+      - Using `init.sh`: how-to-use/running-init-dot-sh.md
   - API Reference:
       - Lib: reference/lib.md
       - _c_extension: reference/_c_extension.md
