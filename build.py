@@ -32,9 +32,6 @@ try:
 except ImportError:
     LOGGER.info("Unable to import `Cython`, falling back to building only `C` extensions")
 
-# Set `PROJECT_ROOT_DIR` to the directory of the current file, if in doubt with regards to path, always use relative to `PROJECT_ROOT_DIR`
-PROJECT_ROOT_DIR = Path(__file__).resolve().parent
-
 
 def list_dir_contents(directory, depth, level=0):
     if level > depth:
@@ -81,8 +78,9 @@ def get_package_name(
         "Unable to determine what is the `PACKAGE_NAME` for this repository, set `default_name` parameter to a default name"
     )
 
-
 # Constants
+# Set `PROJECT_ROOT_DIR` to the directory of the current file, if in doubt with regards to path, always use relative to `PROJECT_ROOT_DIR`
+PROJECT_ROOT_DIR = Path(__file__).resolve().parent
 PACKAGE_NAME = get_package_name()
 # Uncomment if library can still function if extensions fail to compile
 # (e.g. slower, python fallback).
@@ -207,83 +205,17 @@ def extra_compile_args():
     """
     if os.name == "nt":  # Windows
         extra_compile_args = [
-            "/O3",
-            "/Wall",  # Enable all warnings
-            "/Wno-unreachable-code-fallthrough",  # Ignore fallthrough warnings
-            "/Wno-deprecated-declarations",  # Ignore deprecated declarations
-            "/Wno-parentheses-equality",  # Ignore parentheses equality warnings
-            "/Wno-unreachable-code",  # Ignore unreachable code warnings
-            "/sdl",
-            "/guard:cf",
-            "/utf-8",
-            "/diagnostics:caret",
-            "/w14165",
-            "/w44242",
-            "/w44254",
-            "/w34287",
-            "/w44296",
-            "/w44365",
-            "/w44388",
-            "/w44464",
-            "/w14545",
-            "/w14546",
-            "/w14547",
-            "/w14549",
-            "/w14555",
-            "/w34619",
-            "/w44774",
-            "/w44777",
-            "/w24826",
-            "/w14905",
-            "/w14906",
-            "/w14928",
-            "/W4",
-            "/permissive-",
-            "/volatile:iso",
-            "/Zc:inline",
-            "/Zc:preprocessor",
+            "/O2",
         ]
     else:  # UNIX-based systems
         extra_compile_args = [
             "-O3",
-            "-Wall",
             "-Werror",
             "-Wno-unreachable-code-fallthrough",
             "-Wno-deprecated-declarations",
             "-Wno-parentheses-equality",
             "-Wno-unreachable-code",  # TODO: This should no longer be necessary with Cython>=3.0.3
-            "-U_FORTIFY_SOURCE",
-            "-D_FORTIFY_SOURCE=3",
-            "-fstack-protector-strong",
-            "-fcf-protection=full",
-            # "-fstack-clash-protection",
-            "-Wall",
-            "-Werror",
-            "-Wextra",
-            # "-Wpedantic", # Cython error
-            # "-Wconversion", # Cython error
-            "-Wsign-conversion",
-            # "-Wcast-qual",
-            "-Wformat=2",
-            "-Wundef",
-            # "-Wshadow", # Cython error
-            "-Wunused",
-            "-Wnull-dereference",
-            # "-Wdouble-promotion", # Cython error
-            "-Wimplicit-fallthrough",
-            "-Werror=strict-prototypes",
-            "-Wwrite-strings",
         ]
-
-        if platform.system() != "Darwin": # not macos
-            extra_compile_args.extend(
-                [
-                    "-Wno-warning=discarded-qualifiers",  # custom.c:44:39/30/47
-                    "-Wno-error=discarded-qualifiers",  # custom.c:44:39/30/47
-                    "-Wno-discarded-qualifiers",
-                    "-Wcast-align",
-                ]
-            )
     extra_compile_args.append("-UNDEBUG")  # Cython disables asserts by default.
     return extra_compile_args
 
