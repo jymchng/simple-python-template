@@ -117,3 +117,19 @@ tree:
 		echo "Usage: <dir|file> <directory-name> [level]"; \
 		exit 1; \
 	fi;
+
+clean:
+	rm -rf dist build && rm -f simple_python_template/*.so && rm -f simple_python_template/*.pyd
+	rm -rf dist
+	rm -rf **/dist
+	rm -rf .coverag*
+	rm -rf __pycache__
+	rm -rf **/__pycache__
+	rm -rf ./**/*.so
+	rm -rf ./**/*.html
+	rm -rf .ruff_cache
+	rm -rf **/.ruff_cache
+	rm -rf .pytest_cache
+	rm -rf **/.pytest_cache
+	rm -rf **/.mypy_cache
+	rm -rf .mypy_cache
