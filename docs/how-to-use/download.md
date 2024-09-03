@@ -43,7 +43,7 @@ Run the following to bootstrap your installation of the tools.
 bash init.sh
 ```
 
-You will be instructured by the bash script on the installations of the tools. For the list of tools that are recommended, please see [here](../general-tools.md).
+You will be instructured by the bash script on the installations of the tools. For the list of tools that are recommended, please see [here](../tools/general-tools.md).
 
 ## Selection of the Build Tool
 

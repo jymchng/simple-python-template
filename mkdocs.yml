@@ -6,10 +6,11 @@ repo_name: jymchng/simple-python-template
 nav:
   - Home:
       - index.md
-      - General Tools: general-tools.md
-      - Python Tools: python-tools.md
+      - How to Use: how-to-use/index.md
+      - Tools: tools/index.md
       - Documentation: docs.md
   - How To Use:
+      - how-to-use/index.md
       - Download and Installation of Tools: how-to-use/download.md
       - Definitions: how-to-use/definitions.md
       - Minimally Supported Python Version: how-to-use/MSPV.md
@@ -17,6 +18,10 @@ nav:
       - Using Virtual Environments: how-to-use/virtual-env.md
       - Building the Project: how-to-use/building-the-project.md
       - Testing the Codes: how-to-use/testing-the-codes.md
+  - Tools:
+      - tools/index.md
+      - Python Tools: tools/python-tools.md
+      - General Tools: tools/general-tools.md
   - API Reference:
       - Lib: reference/lib.md
       - _c_extension: reference/_c_extension.md
