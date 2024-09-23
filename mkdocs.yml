@@ -16,6 +16,7 @@ nav:
       - Minimally Supported Python Version: how-to-use/MSPV.md
       - Using `init.sh`: how-to-use/running-init-dot-sh.md
       - Using Virtual Environments: how-to-use/virtual-env.md
+      - How to Start Development: how-to-use/how-to-start-developing.md
       - Building the Project: how-to-use/building-the-project.md
       - Testing the Codes: how-to-use/testing-the-codes.md
   - Tools:
