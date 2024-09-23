@@ -25,12 +25,6 @@
 <a href="https://github.com/jymchng/simple-python-template/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed/jymchng/simple-python-template" alt="Closed Issues"></a>
 <a href="https://github.com/jymchng/simple-python-template/issues?q=is%3Aissue+is%3Aopen"><img src="https://img.shields.io/github/issues-raw/jymchng/simple-python-template" alt="Open Issues"></a>
 
-### Community and Social
-<a href="https://twitter.com/intent/follow?screen_name=jymchng"><img src="https://img.shields.io/twitter/follow/jymchng" alt="Twitter Follow"></a>
-<a href="https://gitter.im/simple-python-template/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/simple-python-template/community.svg" alt="Gitter"></a>
-<a href="https://matrix.to/#/!simple-python-template:matrix.org"><img src="https://img.shields.io/matrix/simple-python-template" alt="Matrix"></a>
-<a href="https://discord.gg/simple-python-template"><img src="https://img.shields.io/discord/simple-python-template" alt="Discord"></a>
-
 ### Development and Quality
 <a href="https://github.com/jymchng/simple-python-template/network/members"><img src="https://img.shields.io/github/forks/jymchng/simple-python-template" alt="Forks"></a>
 <a href="https://github.com/jymchng/simple-python-template/stargazers"><img src="https://img.shields.io/github/stars/jymchng/simple-python-template" alt="Stars"></a>
@@ -45,22 +39,6 @@
 <a href="https://github.com/jymchng/simple-python-template/pulls"><img src="https://img.shields.io/github/issues-pr/jymchng/simple-python-template" alt="PRs"></a>
 <a href="https://github.com/jymchng/simple-python-template/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed/jymchng/simple-python-template" alt="Merged PRs"></a>
 <a href="https://github.com/jymchng/simple-python-template/pulls?q=is%3Apr+is%3Aopen"><img src="https://img.shields.io/github/issues-pr/open/jymchng/simple-python-template" alt="Open PRs"></a>
-
-### Funding
-<a href="https://www.patreon.com/jymchng"><img src="https://img.shields.io/badge/donate-patreon-F96854.svg" alt="Patreon"></a>
-<a href="https://ko-fi.com/jymchng"><img src="https://img.shields.io/badge/donate-ko--fi-29ABE0.svg" alt="Ko-Fi"></a>
-<a href="https://opencollective.com/simple-python-template"><img src="https://img.shields.io/badge/donate-open%20collective-1D6DFF.svg" alt="Open Collective"></a>
-<a href="https://saythanks.io/to/jymchng"><img src="https://img.shields.io/badge/say-thanks-1EAEDB.svg" alt="Say Thanks"></a>
-<a href="https://www.buymeacoffee.com/jymchng"><img src="https://img.shields.io/badge/donate-buy%20me%20a%20coffee-FF813F.svg" alt="Buy Me A Coffee"></a>
-
-### Best Practices and Quality Assurance
-<a href="https://bestpractices.coreinfrastructure.org/projects/4578"><img src="https://bestpractices.coreinfrastructure.org/projects/4578/badge" alt="CII Best Practices"></a>
-<a href="https://codebeat.co/projects/github-com-jymchng-simple-python-template-main"><img src="https://codebeat.co/badges/simple-python-template" alt="Codebeat"></a>
-<a href="https://waffle.io/jymchng/simple-python-template"><img src="https://badge.waffle.io/jymchng/simple-python-template.svg?columns=all" alt="Waffle.io - Columns and their card count"></a>
-<a href="https://snyk.io/test/github/jymchng/simple-python-template"><img src="https://img.shields.io/snyk/vulnerabilities/github/jymchng/simple-python-template.svg" alt="Snyk Vulnerabilities"></a>
-<a href="https://app.codacy.com/gh/jymchng/simple-python-template/dashboard"><img src="https://app.codacy.com/project/badge/Grade/ee914306630842f0a12be7e0520683bf"/></a>
-<a href="https://bettercodehub.com/"><img src="https://bettercodehub.com/edge/badge/jymchng/simple-python-template?branch=main" alt="BCH compliance"></a>
-<a href="https://scrutinizer-ci.com/g/jymchng/simple-python-template/?branch=main"><img src="https://scrutinizer-ci.com/g/jymchng/simple-python-template/badges/quality-score.png?b=main" alt="Scrutinizer"></a>
 
 </div>
 
@@ -80,7 +58,6 @@ With a comprehensive `build.py` script included, this template simplifies the bu
 
 - [Features](#features)
 - [How to Use](#how-to-use)
-   - [How to Start](#how-to-start)
 - [Convenient Scripts](#convenient-scripts)
 - [Testing with Docker](#testing-with-docker)
 
@@ -98,8 +75,6 @@ Code Quality: Integrated with Code Climate, Codacy, and Snyk for code quality an
 Coverage Tracking: Coverage tracking with Codecov.
 
 # How To Use
-
-## How to Start
 
 Read the [documentation](https://spyt.asyncmove.com/how-to-use/download/) on how to start using this template repository.
 

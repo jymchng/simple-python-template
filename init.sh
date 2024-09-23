@@ -286,7 +286,7 @@ read -p "Do you want to rename your package now? (yes/no): " rename_response
 
 if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
     # Prompt the user for the package name and GIT_USERNAME
-    read -p "Enter the name for your package: " PACKAGE_NAME
+    read -p "Enter the name for your package (which can be different from your repository name): " PACKAGE_NAME
     read -p "Enter your GitHub Username: " GIT_USERNAME
     read -p "Enter your GitHub Repository Name: " GIT_REPONAME
 
@@ -305,6 +305,12 @@ if [[ "$rename_response" == "yes" || "$rename_response" == "y" ]]; then
             echo "$item does not exist, skipping."
         fi
     done
+
+    # Replace the directory name simple_python_template with PACKAGE_NAME
+    if [[ -d "simple_python_template" ]]; then
+        mv "simple_python_template" "$PACKAGE_NAME"
+        echo "Renamed directory 'simple_python_template' to '$PACKAGE_NAME'."
+    fi
 
     echo "Replacement complete."
 else
