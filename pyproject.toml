@@ -55,7 +55,7 @@ toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
 pre_commit = ">=2.16.0"
-ruff = "0.5.4"
+ruff = "0.7.0"
 mypy = "1.10.1"
 
 cython = "3.0.10"
