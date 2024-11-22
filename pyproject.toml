@@ -45,7 +45,7 @@ generate-ref-docs = "scripts.generate_ref_docs:main"
 python = ">=3.8,<3.13"
 typing-extensions = "^4.12.2"
 rich = ">=10.11.0"
-cyclopts = "^2.9.3"
+cyclopts = "^2.9.9"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.6.0"
